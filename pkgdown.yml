@@ -1,0 +1,10 @@
+pandoc: 2.19.2
+pkgdown: 2.0.7
+pkgdown_sha: ~
+articles:
+  package_intro: package_intro.html
+last_built: 2022-12-24T12:19Z
+urls:
+  reference: https://allen-1242.github.io/StructuralDecompose/reference
+  article: https://allen-1242.github.io/StructuralDecompose/articles
+
