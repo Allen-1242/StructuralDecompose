@@ -11,12 +11,7 @@ LazyData: true
 RoxygenNote: 7.2.3
 Imports:
     strucchange,
-    data.table, 
-    dplyr,
-    stats,
-    utils, 
-    changepoint,
-    segmented
+    changepoint
 Suggests: 
     knitr,
     rmarkdown,
