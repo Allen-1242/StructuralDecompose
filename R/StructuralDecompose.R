@@ -121,9 +121,209 @@ BreakPoints <- function(timeseries, frequency = 52, break_algorithm = 'strucchan
 #' @examples
 MedianCleaning <- function(timeseries, median_level = 0.5, Breakpoints = c(), breaks, frequency = 52)
 {
-  maj_filt_rast<- focal(input_rast, fun=modal, w=matrix(1,nrow=3,ncol=3))
+
+  #Writing the breakpoints
+  t <- vector()
+
+  if(any(is.na(breaks)))
+  {
+    t <- c(0, length(timeseries))
+  }else
+  {
+    t <- breaks
+  }
+
+  #Seasonal check for level changes
+  difference_mat <- outer(t,t, "-")
+  difference_table <- which(difference_mat == frequency , arr.ind = TRUE)
+  difference_table <- data.frame(difference_table)
+
+  p1 <- vector()
+  p2 <- vector()
+
+  if(dim(difference_table)[1] != 0)
+  {
+    for(l in seq (from = 1 , to = c(dim(difference_table)[1]), by = 1))
+    {
+      p1 <- c(t[difference_table['row'][l,]], t[difference_table['col'][l,]])
+      p2 <- c(p2, p1)
+    }
+  }
+
+  t <- t[!(t %in% p2)]
+
+  #Median cleaning of breakpoints
+  med_flag <- FALSE
+  n <- length(timeseries)
+  k <- vector()
+  i <- 1
+  j <- 3
+
+  while(i < n)
+  {
+    while(j < n+1)
+    {
+      L <- t[i]
+      R <- t[j]
+      Lr <- t[i+1]
+
+      if((is.na(R)))
+      {
+        med_flag = TRUE
+        return(k)
+      }
+
+      mid1 <- median(timeseries[c(L+1) : c(Lr)])
+      mid2 <- median(timeseries[c(Lr + 1)] : (R))
+
+      if(mid2 == 0)
+      {
+        mid2 <- 0.0000001
+      }
+
+      if((abs(mid1/mid2) > median_level) || abs(mid2/mid1 > median_level))
+      {
+        k <- c(k , Lr)
+
+        if(is.na(k))
+        {
+          k <- c(0, length(timeseries))
+        }else
+        {
+          k <- c(0, k, length(timeseries))
+        }
+
+        return(k)
+
+      }else
+      {
+        t <- t[t!=Lr]
+      }
+    }
+
+    i <- i + 1
+    j <- j + 1
+    L <- t[i]
+
+    if(med_flag == TRUE)
+    {
+      if(is.na(k))
+      {
+        k <- c(0, length(timeseries))
+      }else
+      {
+        k <- c(0, k, length(timeseries))
+      }
+
+      return(k)
+    }
+
+  }
+
+  #Writing the breakpoints
+  if(is.na(k))
+  {
+    k <- c(0, length(timeseries))
+  }else
+  {
+    k <- c(0, k, length(timeseries))
+  }
+
+  return(k)
+
+
 }
 
+
+#' Mean level checks
+#'
+#' @param timeseries Given time series
+#' @param mean_level Mean distance between two levels
+#' @param Breakpoints Breakpoints identified
+#' @param breaks breakpoints returned
+#' @param frequency Tiemseries frequency, defaults to 12 points
+#'
+#' @return The series cleaned with the mean check
+#' @export
+#'
+#' @examples
+MeanCleaning <- function(timeseries, mean_level = 0.5, Breakpoints = c(), breaks, frequency = 52)
+{
+  breaks_new <- vector()
+  for(x in seq(0, c(length(breaks)), 1))
+  {
+    if(x == c(length(breaks) - 1))
+    {
+      return(breaks)
+    }else
+    {
+      before = timeseries[c(breaks[[x + 1]] - 4):c(breaks[[x + 1]]) - 1]
+      rownames(before) <- NULL
+
+      after = timeseries[c(breaks[[x + 1]] + 1):c(breaks[[x + 1]]) + 4]
+      rownames(after) <- NULL
+
+      #Getting the mean values
+      M1 = mean(before)
+      M2 = mean(after)
+
+      #Checking the mean ratio
+      if((abs(M1/M2)) > mean_level || ((abs(M2/M1)) > mean_level))
+      {
+        breaks_new <- c(breaks, breaks[x + 1])
+      }
+
+    }
+  }
+
+  return(breaks_new)
+}
+
+#' minimum level length checks
+#'
+#' @param timeseries Given time series
+#' @param level_length Mean distance between two levels
+#' @param Breakpoints Breakpoints identified
+#' @param breaks breakpoints returned
+#'
+#' @return The series cleaned with the minimum level check
+#' @export
+#'
+#' @examples
+LevelCheck <- function(timeseries, level_length = 10, Breakpoints = c(), breaks)
+{
+  if(length(breaks != 2))
+  {
+    breaks_new <- vector()
+    for(i in seq(from = 1, to = c(length(breaks) - 1), by = 1))
+    {
+      if(((breaks[i+1] - breaks[i] >= level_length)))
+      {
+        breaks_new <- c(breaks[i+1], breaks_new)
+      }
+    }
+
+    breaks_new <- c(0, breaks_new, length(timeseries))
+    breaks_new <- unique(sort(breaks_new))
+
+
+    if(length(breaks) == 2)
+    {
+      return(breaks_new)
+
+    }else if(c(length(timeseries) - tail(breaks, 2)[1] <= level_length))
+    {
+      breaks_new <- breaks_new[-match(tail(breaks_new, 2)[1], breaks_new)]
+    }
+
+  }else
+  {
+    breaks_new <- c(0, breaks_new, length(breaks))
+    breaks_new <- unique(sort(breaks_new))
+  }
+
+  return(breaks_new)
+}
 
 #' Automatic Anomaly detection
 #'
