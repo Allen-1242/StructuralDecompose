@@ -13,7 +13,9 @@ StructuralDecompose(
   median_level = 0.5,
   mean_level = 0.5,
   level_length = 0.5,
-  conf_level = 0.5
+  conf_level = 0.5,
+  window_len = 12,
+  plot = FALSE
 )
 }
 \arguments{

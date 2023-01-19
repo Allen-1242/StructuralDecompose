@@ -37,7 +37,6 @@ library(strucchange)
 #' @return A list of breakpoints
 #' @export
 #'
-#' @examples
 BreakPoints <- function(timeseries, frequency = 52, break_algorithm = 'strucchange', break_level = 0.05)
 {
   #Strucchange algorithm
@@ -111,7 +110,6 @@ BreakPoints <- function(timeseries, frequency = 52, break_algorithm = 'strucchan
 #' @return The series cleaned with the median check
 #' @export
 #'
-#' @examples
 MedianCleaning <- function(timeseries, median_level = 0.5, Breakpoints = c(), breaks, frequency = 52)
 {
 
@@ -239,7 +237,6 @@ MedianCleaning <- function(timeseries, median_level = 0.5, Breakpoints = c(), br
 #' @return The series cleaned with the mean check
 #' @export
 #'
-#' @examples
 MeanCleaning <- function(timeseries, mean_level = 0.5, Breakpoints = c(), breaks, frequency = 52)
 {
   breaks_new <- vector()
@@ -282,7 +279,6 @@ MeanCleaning <- function(timeseries, mean_level = 0.5, Breakpoints = c(), breaks
 #' @return The series cleaned with the minimum level check
 #' @export
 #'
-#' @examples
 LevelCheck <- function(timeseries, level_length = 10, Breakpoints = c(), breaks)
 {
   if(length(breaks != 2))
@@ -329,7 +325,6 @@ LevelCheck <- function(timeseries, level_length = 10, Breakpoints = c(), breaks)
 #' @return the list of anomalies in the time series, along with the time series plot
 #' @export
 #'
-#' @examples
 AnomalyDetection <- function(timeseries, frequency = 52, conf_level = 0.05, breaks, window_len = 14)
 {    if(is.null(num_obs_per_period)){
   stop("must supply period length for time series decomposition")
@@ -444,7 +439,6 @@ AnomalyDetection <- function(timeseries, frequency = 52, conf_level = 0.05, brea
 #' @return The smoothened time series
 #' @export
 #'
-#' @examples
 Smoothing <- function(timeseries, frequency = 52, smoothening_algorithm = 'lowess', breaks = Break_points)
 {
   #Smoothening the series
@@ -507,13 +501,12 @@ Smoothing <- function(timeseries, frequency = 52, smoothening_algorithm = 'lowes
 #' @return The decomposed time series along with a host of other metrics
 #' @export
 #'
-#' @examples
-StructuralDecompose <- function(Data, frequency = 12, break_algorithm = 'strucchange', smoothening_algorithm = 'lowess', break_level = 0.05, median_level = 0.5, mean_level = 0.5, level_length = 0.5, conf_level = 0.5)
+StructuralDecompose <- function(Data, frequency = 12, break_algorithm = 'strucchange', smoothening_algorithm = 'lowess', break_level = 0.05, median_level = 0.5, mean_level = 0.5, level_length = 0.5, conf_level = 0.5, window_len = 12, plot = FALSE)
 {
   #Strucchange algorithm
 
   #Initial Sanity checks
-  if(!is.numeric(frequency)  || !is.numeric(break_level) || !is.numeric(mean_check) || !is.numeric(median_level) || !is.numeric(level_length) || !is.numeric(conf_level) || !is.numeric(window_len))
+  if(!is.numeric(frequency)  || !is.numeric(break_level) || !is.numeric(mean_level) || !is.numeric(median_level) || !is.numeric(level_length) || !is.numeric(conf_level) || !is.numeric(window_len))
   {
     stop(print('Value needs to be numeric'))
   }
@@ -522,13 +515,6 @@ StructuralDecompose <- function(Data, frequency = 12, break_algorithm = 'strucch
   {
     stop(print('Value needs to be boolean'))
   }
-
-  #If the time series contains NA
-  if(any(is.na(y)))
-  {
-    stop(print('Interpolation of time series needed , recommend the zoo package'))
-  }
-
 
   #Calling the main break-point algorithm
   Break_points <- BreakPoints(timeseries = Data, frequency = frequency, break_algorithm = break_algorithm, break_level = break_level)

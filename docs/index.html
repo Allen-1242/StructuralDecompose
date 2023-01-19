@@ -48,7 +48,8 @@
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="articles/package_intro.html">package_intro</a>
+    <a class="dropdown-item" href="articles/Decomposition.html">Decomposition</a>
+    <a class="dropdown-item" href="articles/package_intro.html">Introduction</a>
   </div>
 </li>
 <li class="nav-item">
@@ -72,22 +73,27 @@
 </h1>
 </div>
 <!-- badges: start -->
-<!-- badges: end -->
-<p>The goal of StructuralDecompose is to …</p>
+
+<p>StructuralDecompose is an algorithm suited to the decomposition of a time series into it’s component terms of trend, seasonality and residuals. It is well suited to decompose a series in the presence of significant level shifts.</p>
+<p>The algorithm outputs the decomposed trend, seasonality, residuals as well as anomalies detected.</p>
+<p>Please note that the package is currently submitted to CRAN. CRAN submissions take a long time. Please use the github download to access the code.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
 <p>You can install the development version of StructuralDecompose like so:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># FILL THIS IN! HOW CAN PEOPLE INSTALL YOUR DEV PACKAGE?</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">package</span><span class="op">(</span><span class="va">StructuralDecompose</span><span class="op">)</span></span>
+<span><span class="fu">install_github</span><span class="op">(</span><span class="st">"StructuralDecompose/StructuralDecompose"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
 </h2>
-<p>This is a basic example which shows you how to solve a common problem:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://allen-1242.github.io/StructuralDecompose/" class="external-link">StructuralDecompose</a></span><span class="op">)</span></span>
-<span><span class="co">## basic example code</span></span></code></pre></div>
+<p>An example code:</p>
+<p>Note that we can specify the break algorithm and the smoothing algorithm as well. If the setting is set to ‘auto’, it will optimize which algorithm to use.</p>
+<p>It is best to keep the default algorithms.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(StructuralDecompose)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>StructuralDecompose <span class="ot">&lt;-</span> <span class="cf">function</span>(Data, <span class="at">frequency =</span> <span class="dv">12</span>, <span class="at">break_algorithm =</span> <span class="st">'strucchange'</span>, <span class="at">smoothening_algorithm =</span> <span class="st">'lowess'</span>, <span class="at">break_level =</span> <span class="fl">0.05</span>, <span class="at">median_level =</span> <span class="fl">0.5</span>, <span class="at">mean_level =</span> <span class="fl">0.5</span>, <span class="at">level_length =</span> <span class="fl">0.5</span>, <span class="at">conf_level =</span> <span class="fl">0.5</span>)</span></code></pre></div>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="license">
@@ -113,7 +119,12 @@
 </ul>
 </div>
 
-
+<div class="dev-status">
+<h2 data-toc-skip>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://CRAN.R-project.org/package=StructuralDecompose" class="external-link"><img src="https://www.r-pkg.org/badges/version/StructuralDecompose" alt="CRAN status"></a></li>
+</ul>
+</div>
 
   </aside>
 </div>

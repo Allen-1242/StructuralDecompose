@@ -1,8 +1,8 @@
 ---
-title: "package_intro"
+title: "Introduction"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{package_intro}
+  %\VignetteIndexEntry{Introduction}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -15,5 +15,11 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-library(StructuralDecompose)
+
 ```
+
+StructuralDecompose is a method that breaks a time series algorithm into various parts. It is particularly well suited to a time series that has several level shifts within it. 
+
+StructuralDecompose returns the series constituent parts including its Trend, Seasonality and residuals. As well as a fairly inbuilt summary of the time series itself and how well it has fit the data. As it performs inbuilt Anomaly Detection, it also returns a series of points that it considers to be anomalies. However more advanced anomaly detection techniques should be considered if you are doing anomaly detection on the time series. 
+
+
