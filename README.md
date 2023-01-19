@@ -6,6 +6,8 @@
 
 The goal of StructuralDecompose is to ...
 
+Please note that the package is currently submitted to CRAN. CRAN submissions take a long time. Please use the github download to access the code. 
+
 ## Installation
 
 You can install the development version of StructuralDecompose like so:
