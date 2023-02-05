@@ -1,29 +1,15 @@
-# Hello, world!
-#
-# This is an example function named 'hello'
-# which prints 'Hello, world!'.
-#
-# You can learn more about package authoring with RStudio at:
-#
-#   http://r-pkgs.had.co.nz/
-#
-# Some useful keyboard shortcuts for package authoring:
-#
-#   Install Package:           'Ctrl + Shift + B'
-#   Check Package:             'Ctrl + Shift + E'
-#   Test Package:              'Ctrl + Shift + T'
-
 #StructuralDecompose
 
 #Novel Method to decompose a levelShifted time series
 library(changepoint)
 library(strucchange)
+library(segmented)
+library(dplyr)
 
-#library(smooth)
+#' Nile River Dataset
+#' @name Nile_dataset
+#' @keywords datasets
 
-#Testing with a toy dataset
-#data1 <- read.csv("C:\\Users\\sunny\\OneDrive\\Documents\\GitHub\\StructuralDecompose\\Nile_DataSet.csv", header=TRUE, stringsAsFactors=FALSE)
-#Data <- data1$x
 
 #Replace this with Twitters anomaly detection method, advanded methods
 
@@ -35,6 +21,10 @@ library(strucchange)
 #' @param break_level Additional parameters for breakpoint algorithm
 #'
 #' @return A list of breakpoints
+#' @importFrom changepoint cpts
+#' @importFrom segmented segmented
+
+
 #' @export
 #'
 BreakPoints <- function(timeseries, frequency = 52, break_algorithm = 'strucchange', break_level = 0.05)
@@ -61,7 +51,7 @@ BreakPoints <- function(timeseries, frequency = 52, break_algorithm = 'strucchan
 
   }
 
-  #Changpoint
+  #Changepoint
   if(break_algorithm == 'changepoint')
   {
     changepoints <- changepoint::cpt.mean(timeseries, method="BinSeg")
@@ -75,9 +65,9 @@ BreakPoints <- function(timeseries, frequency = 52, break_algorithm = 'strucchan
   #Segmented
   if(break_algorithm == 'segmented')
   {
-    changepoints <- changepoint::cpt.mean(timeseries, method="BinSeg")
+    changepoints <- segmented::segmented(timeseries)$psi
 
-    bp =  segmented(timeseries)$psi
+    bp =  changepoints
 
     if(is.na(bp)){print('Change break value , min segment size must be larger than the number of regressors')}
 
@@ -277,6 +267,10 @@ MeanCleaning <- function(timeseries, mean_level = 0.5, Breakpoints = c(), breaks
 #' @param breaks breakpoints returned
 #'
 #' @return The series cleaned with the minimum level check
+#' @importFrom utils tail
+#' @importFrom stats median
+
+
 #' @export
 #'
 LevelCheck <- function(timeseries, level_length = 10, Breakpoints = c(), breaks)
@@ -321,113 +315,171 @@ LevelCheck <- function(timeseries, level_length = 10, Breakpoints = c(), breaks)
 #' @param conf_level Confidence level for Anomaly detection
 #' @param breaks breakpoints identified
 #' @param window_len Window length for anomaly detection
+#' @param window_len Window length for anomaly detection
 #'
 #' @return the list of anomalies in the time series, along with the time series plot
+#' @importFrom stats mad
+#' @importFrom stats median
+
 #' @export
 #'
+
 AnomalyDetection <- function(timeseries, frequency = 52, conf_level = 0.05, breaks, window_len = 14)
-{    if(is.null(num_obs_per_period)){
-  stop("must supply period length for time series decomposition")
-}
+{
+  #Initalizations
+  y_med <- timeseries
+  temp1 <- timeseries
 
-  num_obs <- nrow(data)
+  window_medians <- vector()
+  outliers <- vector()
+  outliers_new <- vector()
+  anomalies <- vector()
 
-  # Check to make sure we have at least two periods worth of data for anomaly context
-  if(num_obs < num_obs_per_period * 2){
-    stop("Anom detection needs at least 2 periods worth of data")
-  }
+  for(i in seq(from = 1, to = c(length(breaks) - 1), by = 1))
+  {
+    win_len <- ceiling(length(timeseries[c(breaks[i]+1) : c(breaks[i+1])])/window_len)
 
-  # Check if our timestamps are posix
-  posix_timestamp <- if (class(data[[1L]])[1L] == "POSIXlt") TRUE else FALSE
-
-  # Handle NAs
-  if (length(rle(is.na(c(NA,data[[2L]],NA)))$values)>3){
-    stop("Data contains non-leading NAs. We suggest replacing NAs with interpolated values (see na.approx in Zoo package).")
-  } else {
-    data <- na.omit(data)
-  }
-
-  # -- Step 1: Decompose data. This returns a univarite remainder which will be used for anomaly detection. Optionally, we might NOT decompose.
-  data_decomp <- stl(ts(data[[2L]], frequency = num_obs_per_period),
-                     s.window = "periodic", robust = TRUE)
-
-  # Remove the seasonal component, and the median of the data to create the univariate remainder
-  data <- data.frame(timestamp = data[[1L]], count = (data[[2L]]-data_decomp$time.series[,"seasonal"]-median(data[[2L]])))
-
-  # Store the smoothed seasonal component, plus the trend component for use in determining the "expected values" option
-  data_decomp <- data.frame(timestamp=data[[1L]], count=(as.numeric(trunc(data_decomp$time.series[,"trend"]+data_decomp$time.series[,"seasonal"]))))
-
-  if(posix_timestamp){
-    data_decomp <- format_timestamp(data_decomp)
-  }
-  # Maximum number of outliers that S-H-ESD can detect (e.g. 49% of data)
-  max_outliers <- trunc(num_obs*k)
-
-  if(max_outliers == 0){
-    stop(paste0("With longterm=TRUE, AnomalyDetection splits the data into 2 week periods by default. You have ", num_obs, " observations in a period, which is too few. Set a higher piecewise_median_period_weeks."))
-  }
-
-  func_ma <- match.fun(median)
-  func_sigma <- match.fun(mad)
-
-  ## Define values and vectors.
-  n <- length(data[[2L]])
-  if (posix_timestamp){
-    R_idx <- as.POSIXlt(data[[1L]][1L:max_outliers], tz = "UTC")
-  } else {
-    R_idx <- 1L:max_outliers
-  }
-
-  num_anoms <- 0L
-
-  # Compute test statistic until r=max_outliers values have been
-  # removed from the sample.
-  for (i in 1L:max_outliers){
-    if(verbose) message(paste(i,"/", max_outliers,"completed"))
-
-    if(one_tail){
-      if(upper_tail){
-        ares <- data[[2L]] - func_ma(data[[2L]])
-      } else {
-        ares <- func_ma(data[[2L]]) - data[[2L]]
+    for(w in seq(1, (win_len)))
+    {
+      if(breaks[i] + window_len >= breaks[i+1])
+      {
+        window_len <- breaks[i+1] - breaks[i]
       }
-    } else {
-      ares = abs(data[[2L]] - func_ma(data[[2L]]))
+
+      med_1 <- median(y_med[c(breaks[i] + 1) : c(breaks[i] + window_len)])
+      y_med[c(breaks[i] + 1) : c(breaks[i] + window_len)] <- med_1
+
+      #Storing the medians
+      window_medians <- c(window_medians, rep(med_1, window_len))
+
+      #Updating length
+      breaks[i] <- breaks[i] + window_len
+
     }
-
-    # protect against constant time series
-    data_sigma <- func_sigma(data[[2L]])
-    if(data_sigma == 0)
-      break
-
-    ares <- ares/data_sigma
-    R <- max(ares)
-
-    temp_max_idx <- which(ares == R)[1L]
-
-    R_idx[i] <- data[[1L]][temp_max_idx]
-
-    data <- data[-which(data[[1L]] == R_idx[i]), ]
-
-    ## Compute critical value.
-    if(one_tail){
-      p <- 1 - alpha/(n-i+1)
-    } else {
-      p <- 1 - alpha/(2*(n-i+1))
-    }
-
-    t <- qt(p,(n-i-1L))
-    lam <- t*(n-i) / sqrt((n-i-1+t**2)*(n-i+1))
-
-    if(R > lam)
-      num_anoms <- i
   }
 
-  if(num_anoms > 0) {
-    R_idx <- R_idx[1L:num_anoms]
-  } else {
-    R_idx = NULL
-  }}
+  #Subtracting the median values
+  temp1 <- timeseries - y_med
+
+  #First pass identifying outliers that are not seasonal in nature
+  outlier_deason <- vector()
+  for(i in seq(from = 1, to = c(length(breaks) - 1), by = 1))
+  {
+    med_1 <- mad(temp1[c(breaks[i] + 1) : c(breaks[i+1])], center = (c(temp1[c(breaks[i] + 1) : c(breaks[i+1])])), constant = 1.4)
+    median_val <- median(c(temp1[c(breaks[i] + 1) : c(breaks[i+1])]))
+
+    if(breaks[i+1] == length(temp1))
+    {
+      next
+    }else
+    {
+      for(p in seq(1, (length(temp1[c(breaks[i] + 1) : c(breaks[i+1])]))))
+      {
+        if(temp1[c(breaks[i] + 1) : c(breaks[i+1])][p] > c(median_val + (med_1 * conf_level)) || temp1[c(breaks[i] + 1) : c(breaks[i+1])][p] < c(median_val - (med_1 * conf_level)))
+        {
+          #Writing the anomalies out
+          outlier_deason <- c(outlier_deason, c(p + breaks[i]))
+        }
+      }
+    }
+
+  }
+
+  #52 Frequency check
+  dif_mat_new <- outer(outlier_deason, outlier_deason, '-')
+  graph_new <- which(dif_mat_new == frequency, arr.ind = TRUE)
+  graph_new <- data.frame(graph_new)
+
+  pairs_1_new <- vector()
+  pairs_new <- vector()
+
+  if(dim(graph_new)[1] != 0)
+  {
+    for(t in seq(from = 1 , to = c(dim(graph_new)[1]), by = 1))
+    {
+      pairs_new <- c(outlier_deason[graph_new['row'][t,]], outlier_deason[graph_new['col'][t,]])
+      pairs_1_new <- c(pairs_1_new, pairs_new)
+    }
+  }
+
+  #No outliers detected
+  outlier_deason <- outlier_deason[(outlier_deason %in% pairs_1_new)]
+
+
+  #################
+  anomalies <- sort(c(outlier_deason))
+
+  for(i in seq(from = 1, to = c(length(breaks) - 1), by = 1))
+  {
+    med_1 <- mad(temp1[c(breaks[i]+1) : c(breaks[i+1])], center = median(c(temp1[c(breaks[i]) : c(breaks[i+1])])), constant = 1.4)
+    median_val <- median(c(temp1[c(breaks[i]+1) : c(breaks[i+1])]))
+
+    #Extracting the anomalies
+    anom_new <- vector()
+    anom_new <- anomalies[dplyr::between(anomalies, breaks[i], breaks[i+1])]
+
+    if(i == 1)
+    {
+      anom_new <- anom_new - c(breaks[i])
+    }else
+    {
+      anom_new <- anom_new - c(breaks[i] - 1)
+    }
+
+
+    for(p in seq(1, (length(anom_new))))
+    {
+      if(i == 1)
+      {
+        if(is.na(temp1[c(breaks[i] + 1) : c(breaks[i+1])][anom_new[p]]))
+        {
+          Results <- list('DeAnomalized_series' = timeseries, 'Anomalies' = anomalies)
+          return(Results)
+        }
+
+        if(temp1[c(breaks[i] + 1) : c(breaks[i+1])][anom_new[p]] > 0)
+        {
+          temp1[c(breaks[i] + 1) : c(breaks[i+1])][anom_new[p]] <- median_val + (med_1 * conf_level)
+        }else
+        {
+          temp1[c(breaks[i] + 1) : c(breaks[i+1])][anom_new[p]] <- median_val - (med_1 * conf_level)
+        }
+      }else
+      {
+        if(is.na(temp1[c(breaks[i] + 1) : c(breaks[i+1])][anom_new[p]]))
+        {
+          Results <- list('DeAnomalized_series' = timeseries, 'Anomalies' = anomalies)
+          return(Results)        }
+
+        if(is.na(temp1[c(breaks[i] + 1) : c(breaks[i+1])][anom_new[p+1]]))
+        {
+          Results <- list('DeAnomalized_series' = timeseries, 'Anomalies' = anomalies)
+          return(Results)        }
+
+        if(temp1[c(breaks[i] + 1) : c(breaks[i+1])][anom_new[p+1]] > 0)
+        {
+          temp1[c(breaks[i] + 1) : c(breaks[i+1])][anom_new[p+1]] <- median_val + (med_1 * conf_level)
+        }else
+        {
+          temp1[c(breaks[i] + 1) : c(breaks[i+1])][anom_new[p+1]] <- median_val - (med_1 * conf_level)
+        }
+
+      }
+    }
+
+  }
+
+
+  final_x <- (temp1 + window_medians)
+  timeseries <- final_x
+
+  anomalies <- sort(unique(anomalies))
+
+  Results <- list('DeAnomalized_series' = timeseries, 'Anomalies' = anomalies)
+
+  return(Results)
+
+}
 
 #' Smoothening of the time series
 #'
@@ -435,11 +487,19 @@ AnomalyDetection <- function(timeseries, frequency = 52, conf_level = 0.05, brea
 #' @param frequency Tiemseries frequency, defaults to 12 points
 #' @param smoothening_algorithm Smoothening algorithm required
 #' @param breaks Breakpoints identified
+#' @param lowess Lowess smoothener
+#' @param breaks Structural Breaks coming in from the break point algorithm
+
 #'
 #' @return The smoothened time series
+#' @importFrom utils tail
+#' @importFrom stats lowess
+#' @importFrom utils tail
+
+
 #' @export
 #'
-Smoothing <- function(timeseries, frequency = 52, smoothening_algorithm = 'lowess', breaks = Break_points)
+Smoothing <- function(timeseries, frequency = 52, smoothening_algorithm = 'lowess', breaks = c(0))
 {
   #Smoothening the series
   k <- vector()
@@ -496,9 +556,13 @@ Smoothing <- function(timeseries, frequency = 52, smoothening_algorithm = 'lowes
 #' @param median_level Average median distance between two level
 #' @param mean_level Average mean distance between a group of points near breakpoints
 #' @param level_length Minimum number of points required to determine a level
-#' @param conf_level Confidence interval used for Anomaly detection
-#'
+#' @param conf_level Confidence level for Anomaly detection, best to keep this a static value
+#' @param window_len Length of the Moving window for Anomaly Detection
+#' @param plot True of False indicating if you want the internal plots to be generated
+
 #' @return The decomposed time series along with a host of other metrics
+#' @importFrom stats ts
+#' @importFrom stats stl
 #' @export
 #'
 StructuralDecompose <- function(Data, frequency = 12, break_algorithm = 'strucchange', smoothening_algorithm = 'lowess', break_level = 0.05, median_level = 0.5, mean_level = 0.5, level_length = 0.5, conf_level = 0.5, window_len = 12, plot = FALSE)
@@ -530,19 +594,26 @@ StructuralDecompose <- function(Data, frequency = 12, break_algorithm = 'strucch
 
 
   #Anomaly Detection
-  Cleanseries <- AnomalyDetection(timeseries = Data, frequency = frequency, breaks = Break_points, conf_level = 0.5)
+  Anom_output <- AnomalyDetection(timeseries = Data, frequency = frequency, breaks = Break_points, conf_level = 0.5)
+  Cleanseries <- Anom_output$DeAnomalized_series
+  Anomalies <- Anom_output$Anomalies
 
   #Smoothing of the time series
   Decomposedtrend <- Smoothing(timeseries = Cleanseries, breaks = Break_points)
 
+  #Detrending the series
+  Detrended_Data <- c(Data - Decomposedtrend)
+
+
   #Transforming into a series, final decomp
-  ts.QTY1 = ts(data = as.vector(t(Decomposedtrend)), frequency = frequency)
+  Detrended_Data = ts(data = as.vector(t(Detrended_Data)), frequency = frequency)
+
 
   decomposed <- NA
   tryCatch(
     {
-      decomposed <- stl(ts.QTY1, s.window = 'periodic')
-    }, error = function(e){ts_QTY1 <<- NULL}
+      decomposed <- stl(Detrended_Data, s.window = 'periodic')
+    }, error = function(e){decomposed <<- NULL}
   )
 
   if(length(decomposed) != 1)
@@ -552,7 +623,7 @@ StructuralDecompose <- function(Data, frequency = 12, break_algorithm = 'strucch
     remainder <- decomposed$time.series[,3]
 
     #Removing seasonality
-    ts_QTY1 <- ts.QTY1 - seasonal
+    Deseasonalized <- Detrended_Data - seasonal
   }else
   {
     seasonal <- NULL
@@ -560,8 +631,10 @@ StructuralDecompose <- function(Data, frequency = 12, break_algorithm = 'strucch
     remainder <- NULL
   }
 
-  newList <- list('anomalies' = anomalies, 'trend_line' = trend_line, 'ds_series' = ts_QTY1,
-                  'breakpoints' = k)
+  Anomalies <- c(1,2,3,44,5,6)
+
+  newList <- list('anomalies' = Anomalies, 'trend_line' = Decomposedtrend, 'Deseaonalized_Series' = Deseasonalized,
+                  'breakpoints' = Break_points, 'trend' = trend, 'seasonality' = seasonal, 'remainder' = remainder)
 
   return(newList)
 }

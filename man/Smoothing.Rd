@@ -8,7 +8,7 @@ Smoothing(
   timeseries,
   frequency = 52,
   smoothening_algorithm = "lowess",
-  breaks = Break_points
+  breaks = c(0)
 )
 }
 \arguments{
@@ -18,7 +18,9 @@ Smoothing(
 
 \item{smoothening_algorithm}{Smoothening algorithm required}
 
-\item{breaks}{Breakpoints identified}
+\item{breaks}{Structural Breaks coming in from the break point algorithm}
+
+\item{lowess}{Lowess smoothener}
 }
 \value{
 The smoothened time series

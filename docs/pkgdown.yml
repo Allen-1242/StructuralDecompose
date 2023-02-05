@@ -3,6 +3,7 @@ pkgdown: 2.0.7
 pkgdown_sha: ~
 articles:
   Decomposition: Decomposition.html
+  Example-Walkthrough: Example-Walkthrough.html
   package_intro: package_intro.html
-last_built: 2023-01-19T15:06Z
+last_built: 2023-02-05T08:52Z
 

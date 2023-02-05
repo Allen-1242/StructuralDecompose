@@ -4,14 +4,16 @@ Title: Decomposes a level shifted time series
 Version: 0.1.0
 Author: Allen Daniel Sunny 
 Maintainer: <allensunny1242@gmail.com>
-Description: Decomposes a time series that contains many structural breaks in the time series 
+Description: Decomposes a time series that contains many structural breaks in the time series. 
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.2.3
 Imports:
     strucchange,
-    changepoint
+    changepoint,
+    segmented,
+    dplyr
 Suggests: 
     knitr,
     rmarkdown,

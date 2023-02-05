@@ -1,0 +1,78 @@
+---
+title: "Example-Walkthrough"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Example-Walkthrough}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
+# Introduction
+In this example, we will go through the various features of StructuralDecompose. We will trace it's behavior with the popular 'Nile Dataset' that tracks the annual flow of the Nile river. This dataset has a single break-point in the series. We will test our algorithm against other common trend fitting algorithms as well.
+
+
+# Getting Started 
+StructuralDecompose primarily relies on 'Strucchange' and 'changepoints' for the detection of breakpoints. Other packages will be added soon. Currently the smoothening algorithm defaults to loess, but we will add further smoothening algorithms in the future. 
+
+
+```{r libraries}
+library(changepoint)
+library(strucchange)
+```
+
+
+# Loading the Data
+To read the data we can use the simple: 
+
+```{r Data Loading}
+data <- StructuralDecompose::Nile_dataset[,1]
+```
+
+
+# Decomposition
+Let's decompose the time series into parts and observe it's behavior 
+
+```{r Start of the function}
+Results <- StructuralDecompose(Data = StructuralDecompose::Nile_dataset[,1])
+Results$trend_line
+```
+
+<!-- ```{r} -->
+<!-- knitr::include_graphics("/images/Anomalies_Media.png", error = FALSE) -->
+<!-- ``` -->
+
+
+<!-- matplot(cbind(data, Results$trend, Results$trend_line, lowess(data)$y), type = 'l') -->
+
+<!-- Results$trend -->
+
+<!-- matplot(cbind(Results$seasonal, Data = data), type = 'l') -->
+<!-- matplot(cbind(Results$trend, data, Results$trend_line), type = 'l') -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

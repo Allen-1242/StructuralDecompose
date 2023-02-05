@@ -35,7 +35,11 @@ StructuralDecompose(
 
 \item{level_length}{Minimum number of points required to determine a level}
 
-\item{conf_level}{Confidence interval used for Anomaly detection}
+\item{conf_level}{Confidence level for Anomaly detection, best to keep this a static value}
+
+\item{window_len}{Length of the Moving window for Anomaly Detection}
+
+\item{plot}{True of False indicating if you want the internal plots to be generated}
 }
 \value{
 The decomposed time series along with a host of other metrics
