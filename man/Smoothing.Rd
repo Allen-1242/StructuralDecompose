@@ -14,11 +14,11 @@ Smoothing(
 \arguments{
 \item{timeseries}{Given time series}
 
-\item{frequency}{Tiemseries frequency, defaults to 12 points}
+\item{frequency}{Timeseries frequency, defaults to 12 points}
 
 \item{smoothening_algorithm}{Smoothening algorithm required}
 
-\item{breaks}{Structural Breaks coming in from the break point algorithm}
+\item{breaks}{Breakpoints identified by the previous algorithm}
 
 \item{lowess}{Lowess smoothener}
 }

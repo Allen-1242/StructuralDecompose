@@ -484,11 +484,10 @@ AnomalyDetection <- function(timeseries, frequency = 52, conf_level = 0.05, brea
 #' Smoothening of the time series
 #'
 #' @param timeseries Given time series
-#' @param frequency Tiemseries frequency, defaults to 12 points
+#' @param frequency Timeseries frequency, defaults to 12 points
 #' @param smoothening_algorithm Smoothening algorithm required
-#' @param breaks Breakpoints identified
+#' @param breaks Breakpoints identified by the previous algorithm
 #' @param lowess Lowess smoothener
-#' @param breaks Structural Breaks coming in from the break point algorithm
 
 #'
 #' @return The smoothened time series
@@ -631,10 +630,10 @@ StructuralDecompose <- function(Data, frequency = 12, break_algorithm = 'strucch
     remainder <- NULL
   }
 
-  Anomalies <- c(1,2,3,44,5,6)
-
   newList <- list('anomalies' = Anomalies, 'trend_line' = Decomposedtrend, 'Deseaonalized_Series' = Deseasonalized,
                   'breakpoints' = Break_points, 'trend' = trend, 'seasonality' = seasonal, 'remainder' = remainder)
+
+
 
   return(newList)
 }

@@ -41,8 +41,8 @@ data <- StructuralDecompose::Nile_dataset[,1]
 Let's decompose the time series into parts and observe it's behavior 
 
 ```{r Start of the function}
-Results <- StructuralDecompose(Data = StructuralDecompose::Nile_dataset[,1])
-Results$trend_line
+Results <- StructuralDecompose::StructuralDecompose(Data = StructuralDecompose::Nile_dataset[,1])
+Results
 ```
 
 <!-- ```{r} -->
