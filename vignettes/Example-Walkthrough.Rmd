@@ -36,14 +36,38 @@ To read the data we can use the simple:
 data <- StructuralDecompose::Nile_dataset[,1]
 ```
 
+Let's see the movement of the data over time 
 
+```{r Base data visualization}
+matplot(data, type = 'l', xlab = 'Years', ylab = 'Annual Flow of the Nile (10^8 m^3')
+```
+
+There is a sudden level shift within the data, let's see decompose with simple stl and see how well the data movement is captured. 
+
+```{r stl decomposition}
+data <- StructuralDecompose::Nile_dataset[,1]
+
+data = ts(data = as.vector(t(data)), frequency = 2)
+
+decomposed <- stl(data, s.window = 'periodic')
+
+seasonal <- decomposed$time.series[,1]
+trend <- decomposed$time.series[,2]
+remainder <- decomposed$time.series[,3]
+```
 # Decomposition
 Let's decompose the time series into parts and observe it's behavior 
 
-```{r Start of the function}
-Results <- StructuralDecompose::StructuralDecompose(Data = StructuralDecompose::Nile_dataset[,1])
-Results
+```{r stl plotting all}
+plot(cbind(seasonal, remainder, trend), type = 'l', main = 'Decomposed Series')
 ```
+
+As we can see the trend overexplains the time series 
+
+```{r Start of the function}
+matplot(cbind(trend, data), type = 'l', xlab = 'Years', ylab = 'Annual Flow of the Nile (10^8 m^3', main = 'Trend vs Base Data')
+```
+As we can see the trend overexplains the time series 
 
 <!-- ```{r} -->
 <!-- knitr::include_graphics("/images/Anomalies_Media.png", error = FALSE) -->
