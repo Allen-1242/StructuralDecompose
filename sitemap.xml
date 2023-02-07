@@ -13,6 +13,9 @@
     <loc>/articles/Decomposition.html</loc>
   </url>
   <url>
+    <loc>/articles/Example-Walkthrough.html</loc>
+  </url>
+  <url>
     <loc>/articles/index.html</loc>
   </url>
   <url>
@@ -31,9 +34,6 @@
     <loc>/reference/AnomalyDetection.html</loc>
   </url>
   <url>
-    <loc>/reference/BreakPoints.html</loc>
-  </url>
-  <url>
     <loc>/reference/LevelCheck.html</loc>
   </url>
   <url>
@@ -41,6 +41,9 @@
   </url>
   <url>
     <loc>/reference/MedianCleaning.html</loc>
+  </url>
+  <url>
+    <loc>/reference/Nile_dataset.html</loc>
   </url>
   <url>
     <loc>/reference/Smoothing.html</loc>

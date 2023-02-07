@@ -49,6 +49,7 @@
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/Decomposition.html">Decomposition</a>
+    <a class="dropdown-item" href="../articles/Example-Walkthrough.html">Example-Walkthrough</a>
     <a class="dropdown-item" href="../articles/package_intro.html">Introduction</a>
   </div>
 </li>
@@ -101,7 +102,9 @@ random movements. In StructuralDecompose, we assume that the trend can
 be broken up into many different parts based upon breakpoints that we
 have identified in the series.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/StructuralDecompose.html">StructuralDecompose</a></span><span class="op">(</span><span class="va">Data</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu">StructuralDecompose</span><span class="fu">::</span><span class="va"><a href="../reference/Nile_dataset.html">Nile_dataset</a></span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span></span>
+<span></span>
+<span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/StructuralDecompose.html">StructuralDecompose</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span>
 <span><span class="va">x</span><span class="op">$</span><span class="va">trend</span> </span></code></pre></div>
 <p>Here we have a few different versions of Trend</p>
 </div>
@@ -113,12 +116,13 @@ very broadly be either Additive or multiplicative. StructuralDecompose
 automatically identifies the seasonality type and treats it
 accordingly.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/StructuralDecompose.html">StructuralDecompose</a></span><span class="op">(</span><span class="va">Data</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/StructuralDecompose.html">StructuralDecompose</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span>
 <span><span class="va">x</span><span class="op">$</span><span class="va">seasonality</span> </span></code></pre></div>
 <p>Here we have two different types of seasonality</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">plot_obj</span> <span class="op">&lt;-</span> <span class="fu">TangledFeatures</span><span class="op">(</span><span class="va">Data</span><span class="op">)</span><span class="op">$</span><span class="va">Graph_plot</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">plot_obj</span><span class="op">)</span></span></code></pre></div>
+<!-- ```{r eval = FALSE} -->
+<!-- plot_obj <- StructuralDecompose(Data)$Graph_plot -->
+<!-- plot(plot_obj) -->
+<!-- ``` -->
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>
