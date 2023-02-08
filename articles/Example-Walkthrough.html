@@ -126,7 +126,7 @@ with simple stl and see how well the data movement is captured.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu">StructuralDecompose</span><span class="fu">::</span><span class="va"><a href="../reference/Nile_dataset.html">Nile_dataset</a></span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span></span>
 <span></span>
-<span><span class="va">data</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/ts.html" class="external-link">ts</a></span><span class="op">(</span>data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/vector.html" class="external-link">as.vector</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span><span class="op">)</span>, frequency <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
+<span><span class="va">data</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/ts.html" class="external-link">ts</a></span><span class="op">(</span>data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/vector.html" class="external-link">as.vector</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span><span class="op">)</span>, frequency <span class="op">=</span> <span class="fl">12</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">decomposed</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/stl.html" class="external-link">stl</a></span><span class="op">(</span><span class="va">data</span>, s.window <span class="op">=</span> <span class="st">'periodic'</span><span class="op">)</span></span>
 <span></span>
@@ -142,18 +142,37 @@ behavior</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">seasonal</span>, <span class="va">remainder</span>, <span class="va">trend</span><span class="op">)</span>, type <span class="op">=</span> <span class="st">'l'</span>, main <span class="op">=</span> <span class="st">'Decomposed Series'</span><span class="op">)</span></span></code></pre></div>
 <p><img src="Example-Walkthrough_files/figure-html/stl%20plotting%20all-1.png" width="700"></p>
-<p>As we can see the trend overexplains the time series</p>
+<p>As we can see the trend overexplains the time series and we do not
+see the average movement of the series</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/matplot.html" class="external-link">matplot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">trend</span>, <span class="va">data</span><span class="op">)</span>, type <span class="op">=</span> <span class="st">'l'</span>, xlab <span class="op">=</span> <span class="st">'Years'</span>, ylab <span class="op">=</span> <span class="st">'Annual Flow of the Nile (10^8 m^3'</span>, main <span class="op">=</span> <span class="st">'Trend vs Base Data'</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Example-Walkthrough_files/figure-html/Start%20of%20the%20function-1.png" width="700">
-As we can see the trend overexplains the time series</p>
-<!-- ```{r} -->
-<!-- knitr::include_graphics("/images/Anomalies_Media.png", error = FALSE) -->
-<!-- ``` -->
-<!-- matplot(cbind(data, Results$trend, Results$trend_line, lowess(data)$y), type = 'l') -->
-<!-- Results$trend -->
-<!-- matplot(cbind(Results$seasonal, Data = data), type = 'l') -->
-<!-- matplot(cbind(Results$trend, data, Results$trend_line), type = 'l') -->
+<p><img src="Example-Walkthrough_files/figure-html/Start%20of%20the%20function-1.png" width="700"></p>
+<p>Let’s now check simple smoothening with lowess</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">Trend</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lowess.html" class="external-link">lowess</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span><span class="op">$</span><span class="va">y</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/matplot.html" class="external-link">matplot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">Trend</span>, <span class="va">data</span><span class="op">)</span>, type <span class="op">=</span> <span class="st">'l'</span>, xlab <span class="op">=</span> <span class="st">'Years'</span>, ylab <span class="op">=</span> <span class="st">'Annual Flow of the Nile (10^8 m^3'</span>, main <span class="op">=</span> <span class="st">'Smoothened Trend vs Base Data'</span><span class="op">)</span></span></code></pre></div>
+<p><img src="Example-Walkthrough_files/figure-html/Simple%20smoothening-1.png" width="700"></p>
+<p>As we can see, it does not do a great job of identifying that
+significant level shift, it smoothens the entire series at once.</p>
+<p>Let’s see it’s behavior with StructuralDecompose</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="va">Results</span> <span class="op">&lt;-</span> <span class="fu">StructuralDecompose</span><span class="fu">::</span><span class="fu"><a href="../reference/StructuralDecompose.html">StructuralDecompose</a></span><span class="op">(</span>Data <span class="op">=</span> <span class="va">data</span><span class="op">)</span></span>
+<span>  </span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/matplot.html" class="external-link">matplot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">Results</span><span class="op">$</span><span class="va">trend_line</span>, <span class="va">data</span><span class="op">)</span>, type <span class="op">=</span> <span class="st">'l'</span>, xlab <span class="op">=</span> <span class="st">'Years'</span>, ylab <span class="op">=</span> <span class="st">'Annual Flow of the Nile (10^8 m^3'</span>, main <span class="op">=</span> <span class="st">'New Trend vs Base Data'</span><span class="op">)</span></span></code></pre></div>
+<p><img src="Example-Walkthrough_files/figure-html/New%20smoothening%20with%20old%20data-1.png" width="700"></p>
+<p>As we can see, the algorithm treats the series as two separate time
+series, and smoothens each one. This delivers a superior
+decomposition.</p>
+<p>Let’s see the other components of seasonality and the remainder.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/matplot.html" class="external-link">matplot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">Results</span><span class="op">$</span><span class="va">seasonality</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">data</span> <span class="op">-</span> <span class="va">Results</span><span class="op">$</span><span class="va">trend_line</span><span class="op">)</span><span class="op">)</span>, type <span class="op">=</span> <span class="st">'l'</span>, xlab <span class="op">=</span> <span class="st">'Years'</span>, ylab <span class="op">=</span> <span class="st">'Annual Flow of the Nile 10^8 m^3'</span>,main <span class="op">=</span> <span class="st">'Seasonality vs Detrended Data'</span><span class="op">)</span></span></code></pre></div>
+<p><img src="Example-Walkthrough_files/figure-html/Seasonality-1.png" width="700"></p>
+<p>As we can see the behavior of seasonality is much better now, let’s
+compare it with the older series</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/matplot.html" class="external-link">matplot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">seasonal</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">data</span> <span class="op">-</span> <span class="va">trend</span><span class="op">)</span><span class="op">)</span>, type <span class="op">=</span> <span class="st">'l'</span>, xlab <span class="op">=</span> <span class="st">'Years'</span>, ylab <span class="op">=</span> <span class="st">'Annual Flow of the Nile 10^8 m^3'</span>,main <span class="op">=</span> <span class="st">'Seasonality vs Detrended Data'</span><span class="op">)</span></span></code></pre></div>
+<p><img src="Example-Walkthrough_files/figure-html/New%20smoothening%20with%20older%20data-1.png" width="700"></p>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>
