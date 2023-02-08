@@ -62,7 +62,7 @@ Let's decompose the time series into parts and observe it's behavior
 plot(cbind(seasonal, remainder, trend), type = 'l', main = 'Decomposed Series')
 ```
 
-As we can see the trend overexplains the time series and we do not see the average movement of the series 
+As we can see the trend over explains the time series and we do not see the average movement of the series 
 
 ```{r Start of the function}
 matplot(cbind(trend, data), type = 'l', xlab = 'Years', ylab = 'Annual Flow of the Nile (10^8 m^3', main = 'Trend vs Base Data')
