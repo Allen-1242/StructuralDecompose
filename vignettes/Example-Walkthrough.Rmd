@@ -24,8 +24,8 @@ StructuralDecompose primarily relies on 'Strucchange' and 'changepoints' for the
 
 
 ```{r libraries}
-library(changepoint)
-library(strucchange)
+suppressMessages(suppressWarnings(library(changepoint)))
+suppressMessages(suppressWarnings(library(strucchange)))
 ```
 
 
