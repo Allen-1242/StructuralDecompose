@@ -47,7 +47,7 @@ There is a sudden level shift within the data, let's see decompose with simple s
 ```{r stl decomposition}
 data <- StructuralDecompose::Nile_dataset[,1]
 
-data = ts(data = as.vector(t(data)), frequency = 2)
+data = ts(data = as.vector(t(data)), frequency = 12)
 
 decomposed <- stl(data, s.window = 'periodic')
 
@@ -62,24 +62,45 @@ Let's decompose the time series into parts and observe it's behavior
 plot(cbind(seasonal, remainder, trend), type = 'l', main = 'Decomposed Series')
 ```
 
-As we can see the trend overexplains the time series 
+As we can see the trend overexplains the time series and we do not see the average movement of the series 
 
 ```{r Start of the function}
 matplot(cbind(trend, data), type = 'l', xlab = 'Years', ylab = 'Annual Flow of the Nile (10^8 m^3', main = 'Trend vs Base Data')
 ```
-As we can see the trend overexplains the time series 
 
-<!-- ```{r} -->
-<!-- knitr::include_graphics("/images/Anomalies_Media.png", error = FALSE) -->
-<!-- ``` -->
+Let's now check simple smoothening with lowess 
+```{r Simple smoothening}
+Trend <- lowess(data)$y
+matplot(cbind(Trend, data), type = 'l', xlab = 'Years', ylab = 'Annual Flow of the Nile (10^8 m^3', main = 'Smoothened Trend vs Base Data')
+```
+
+As we can see, it does not do a great job of identifying that significant level shift, it smoothens the entire series at once. 
+
+Let's see it's behavior with StructuralDecompose
+
+```{r New smoothening}
+
+Results <- StructuralDecompose::StructuralDecompose(Data = data)
+  
+matplot(cbind(Results$trend_line, data), type = 'l', xlab = 'Years', ylab = 'Annual Flow of the Nile (10^8 m^3', main = 'New Trend vs Base Data')
+
+```
+
+As we can see, the algorithm treats the series as two separate time series, and smoothens each one. This delivers a superior decomposition. 
+
+Let's see the other components of seasonality and the remainder. 
 
 
-<!-- matplot(cbind(data, Results$trend, Results$trend_line, lowess(data)$y), type = 'l') -->
+```{r New smoothening}
+matplot(cbind(as.numeric(Results$seasonality), c(data - Results$trend_line)), type = 'l', xlab = 'Years', ylab = 'Annual Flow of the Nile 10^8 m^3',main = 'Seasonality vs Detrended Data')
+```
 
-<!-- Results$trend -->
+As we can see the behavior of seasonality is much better now, let's compare it with the older series
 
-<!-- matplot(cbind(Results$seasonal, Data = data), type = 'l') -->
-<!-- matplot(cbind(Results$trend, data, Results$trend_line), type = 'l') -->
+
+```{r New smoothening}
+matplot(cbind(as.numeric(seasonal), c(data - trend)), type = 'l', xlab = 'Years', ylab = 'Annual Flow of the Nile 10^8 m^3',main = 'Seasonality vs Detrended Data')
+```
 
 
 
