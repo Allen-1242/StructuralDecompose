@@ -78,7 +78,7 @@ As we can see, it does not do a great job of identifying that significant level 
 
 Let's see it's behavior with StructuralDecompose
 
-```{r New smoothening}
+```{r New smoothening with old data}
 
 Results <- StructuralDecompose::StructuralDecompose(Data = data)
   
@@ -91,14 +91,14 @@ As we can see, the algorithm treats the series as two separate time series, and 
 Let's see the other components of seasonality and the remainder. 
 
 
-```{r New smoothening}
+```{r Seasonality}
 matplot(cbind(as.numeric(Results$seasonality), c(data - Results$trend_line)), type = 'l', xlab = 'Years', ylab = 'Annual Flow of the Nile 10^8 m^3',main = 'Seasonality vs Detrended Data')
 ```
 
 As we can see the behavior of seasonality is much better now, let's compare it with the older series
 
 
-```{r New smoothening}
+```{r New smoothening with older data}
 matplot(cbind(as.numeric(seasonal), c(data - trend)), type = 'l', xlab = 'Years', ylab = 'Annual Flow of the Nile 10^8 m^3',main = 'Seasonality vs Detrended Data')
 ```
 
