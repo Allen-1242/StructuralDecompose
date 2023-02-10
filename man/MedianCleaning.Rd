@@ -4,28 +4,24 @@
 \alias{MedianCleaning}
 \title{Median level checks}
 \usage{
-MedianCleaning(
-  timeseries,
-  median_level = 0.5,
-  Breakpoints = c(),
-  breaks,
-  frequency = 52
-)
+MedianCleaning(timeseries, median_level = 0.5, breaks, frequency = 52)
 }
 \arguments{
 \item{timeseries}{Given time series}
 
 \item{median_level}{Median distance between two levels}
 
-\item{Breakpoints}{Breakpoints identified}
-
 \item{breaks}{Breaks identified}
 
-\item{frequency}{Tiemseries frequency, defaults to 12 points}
+\item{frequency}{Timeseries frequency, defaults to 12 points}
 }
 \value{
 The series cleaned with the median check
 }
 \description{
 Median level checks
+}
+\examples{
+MedianCleaning(timeseries = StructuralDecompose::Nile_dataset[,1], breaks = c(1,4,5))
+MedianCleaning(timeseries = runif(n = 50, min = 1, max = 10), breaks = c(1,4,5))
 }

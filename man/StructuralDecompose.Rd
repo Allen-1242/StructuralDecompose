@@ -12,7 +12,7 @@ StructuralDecompose(
   break_level = 0.05,
   median_level = 0.5,
   mean_level = 0.5,
-  level_length = 0.5,
+  level_length = 12,
   conf_level = 0.5,
   window_len = 12,
   plot = FALSE
@@ -46,4 +46,8 @@ The decomposed time series along with a host of other metrics
 }
 \description{
 Main decomposition algorithm
+}
+\examples{
+StructuralDecompose(Data = StructuralDecompose::Nile_dataset[,1])
+StructuralDecompose(Data = runif(n = 50, min = 1, max = 10))
 }

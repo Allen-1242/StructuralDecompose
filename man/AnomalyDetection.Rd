@@ -7,7 +7,7 @@
 AnomalyDetection(
   timeseries,
   frequency = 52,
-  conf_level = 0.05,
+  conf_level = 1.5,
   breaks,
   window_len = 14
 )
@@ -28,4 +28,8 @@ the list of anomalies in the time series, along with the time series plot
 }
 \description{
 Automatic Anomaly detection
+}
+\examples{
+AnomalyDetection(timeseries = StructuralDecompose::Nile_dataset[,1], breaks = c(4, 50, 80))
+AnomalyDetection(timeseries = runif(n = 50, min = 1, max = 10),  breaks = c(4, 20, 30))
 }

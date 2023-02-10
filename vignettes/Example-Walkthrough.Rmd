@@ -47,7 +47,7 @@ There is a sudden level shift within the data, let's see decompose with simple s
 ```{r stl decomposition}
 data <- StructuralDecompose::Nile_dataset[,1]
 
-data = ts(data = as.vector(t(data)), frequency = 12)
+data <- ts(data = as.vector(t(data)), frequency = 12)
 
 decomposed <- stl(data, s.window = 'periodic')
 
@@ -101,23 +101,3 @@ As we can see the behavior of seasonality is much better now, let's compare it w
 ```{r New smoothening with older data}
 matplot(cbind(as.numeric(seasonal), c(data - trend)), type = 'l', xlab = 'Years', ylab = 'Annual Flow of the Nile 10^8 m^3',main = 'Seasonality vs Detrended Data')
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

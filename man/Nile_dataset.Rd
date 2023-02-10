@@ -2,32 +2,8 @@
 % Please edit documentation in R/StructuralDecompose.R
 \name{Nile_dataset}
 \alias{Nile_dataset}
-\alias{BreakPoints}
 \title{Nile River Dataset}
-\usage{
-BreakPoints(
-  timeseries,
-  frequency = 52,
-  break_algorithm = "strucchange",
-  break_level = 0.05
-)
-}
-\arguments{
-\item{timeseries}{Given time series}
-
-\item{frequency}{Tiemseries frequency, defaults to 12 points}
-
-\item{break_algorithm}{Breakpoint algorithm to be used. Defaults to strcchange}
-
-\item{break_level}{Additional parameters for breakpoint algorithm}
-}
-\value{
-A list of breakpoints
-}
 \description{
 Nile River Dataset
 }
-\keyword{Generation}
-\keyword{breakpoints}
 \keyword{datasets}
-\keyword{of}

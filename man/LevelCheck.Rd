@@ -2,16 +2,14 @@
 % Please edit documentation in R/StructuralDecompose.R
 \name{LevelCheck}
 \alias{LevelCheck}
-\title{minimum level length checks}
+\title{Minimum level length checks}
 \usage{
-LevelCheck(timeseries, level_length = 10, Breakpoints = c(), breaks)
+LevelCheck(timeseries, level_length = 10, breaks)
 }
 \arguments{
 \item{timeseries}{Given time series}
 
 \item{level_length}{Mean distance between two levels}
-
-\item{Breakpoints}{Breakpoints identified}
 
 \item{breaks}{breakpoints returned}
 }
@@ -19,5 +17,9 @@ LevelCheck(timeseries, level_length = 10, Breakpoints = c(), breaks)
 The series cleaned with the minimum level check
 }
 \description{
-minimum level length checks
+Minimum level length checks
+}
+\examples{
+LevelCheck(timeseries = StructuralDecompose::Nile_dataset[,1], breaks = c(1,4,5))
+LevelCheck(timeseries = runif(n = 50, min = 1, max = 10), breaks = c(1,4,5))
 }
