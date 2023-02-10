@@ -1,6 +1,6 @@
 # StructuralDecompose (development version)
 
-# StructuralDecompose 0.1.0
+# StructuralDecompose 0.1.0.9000
 * Updated examples for all functions 
 
 * Moved from print() to warnings() for all console output
