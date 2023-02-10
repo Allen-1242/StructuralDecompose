@@ -61,7 +61,7 @@
 <span>  break_level <span class="op">=</span> <span class="fl">0.05</span>,</span>
 <span>  median_level <span class="op">=</span> <span class="fl">0.5</span>,</span>
 <span>  mean_level <span class="op">=</span> <span class="fl">0.5</span>,</span>
-<span>  level_length <span class="op">=</span> <span class="fl">0.5</span>,</span>
+<span>  level_length <span class="op">=</span> <span class="fl">12</span>,</span>
 <span>  conf_level <span class="op">=</span> <span class="fl">0.5</span>,</span>
 <span>  window_len <span class="op">=</span> <span class="fl">12</span>,</span>
 <span>  plot <span class="op">=</span> <span class="cn">FALSE</span></span>
@@ -121,12 +121,210 @@
 <p>The decomposed time series along with a host of other metrics</p>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">StructuralDecompose</span><span class="op">(</span>Data <span class="op">=</span> <span class="fu">StructuralDecompose</span><span class="fu">::</span><span class="va"><a href="Nile_dataset.html">Nile_dataset</a></span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $anomalies</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  2  3  4  5  6  7  8  9 11 12 14 15 16 17 18 19 21 22 24 25 26 27 28</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $trend_line</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [1] 1137.9436 1136.9709 1135.8318 1134.5272 1133.0949 1131.5766 1129.9997</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [8] 1128.3720 1126.6193 1124.3596 1122.3628 1120.5238 1119.1214 1118.1976</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [15] 1117.9579 1118.7292 1120.9707 1124.5740 1128.7926 1132.5750 1134.4106</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [22] 1135.6300 1136.7808 1137.9552 1139.1380 1140.2664 1141.2516 1142.0037</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [29]  833.5024  833.5034  833.4934  833.4752  833.4514  833.4272  833.4065</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [36]  833.3932  833.3944  833.4166  833.4689  833.5577  833.6851  833.8489</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [43]  834.0452  834.2708  834.5215  834.7923  835.0776  835.3642  835.6231</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [50]  835.8033  835.8232  835.5759  835.2999  834.8540  834.2970  833.6987</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [57]  833.1498  832.7101  832.4310  832.3386  832.4194  832.6920  833.1493</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [64]  833.7915  834.6195  835.6680  836.9777  838.5399  840.3426  842.3489</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [71]  844.4798  846.6768  848.9136  851.1488  853.3382  855.4136  857.2771</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [78]  858.9158  859.7719  860.1453  860.2497  860.2100  860.1021  859.9751</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [85]  859.8599  859.7724  859.7192  859.7005  859.7147  859.7568  859.8183</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [92]  859.8904  859.9611  860.0171  860.0440  860.0260  859.9471  859.7946</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [99]  859.5564  859.2252</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $Deseaonalized_Series</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             Jan           Feb           Mar           Apr           May</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  -13.79996020    9.15951109 -128.23318570   35.55827994  -13.79778120</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2   -4.97778524 -138.06719452  -53.35925221 -198.64365622   18.32644548</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  125.00558964   65.86401628  -66.65301349  -81.91819624 -100.20522515</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 -137.25075351  172.71384754  261.12975658   95.52785603  -43.38797374</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  -67.47950409  -28.67283932  -23.22455729  -30.49032285  -12.00281222</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  -47.27580212   18.43841179   56.44936508   70.29403756  108.67761975</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  -32.76998023 -123.01839193   -7.73956747  144.67189779  -37.97994107</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8   62.28370569  112.35806718  -18.12052774   23.38503860   74.58241387</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9   63.19648478 -155.66416581 -100.95780574 -159.13963370              </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             Jun           Jul           Aug           Sep           Oct</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   69.84266810 -214.83755465   71.85955779  246.05259492  -35.20494609</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 -284.15469222  -68.63050404  -22.34345550  -31.73866233   23.52462332</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   47.91588413  142.66874858 -169.24364916  109.22052040  -51.27261762</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  -66.42967882 -275.88310425  -40.03924468 -129.84961767  234.36233810</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5   68.56531407  -34.13484230  -18.46713350  -86.47784446  -87.55552757</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  102.75128473   87.18447056  141.69159760  -66.67070337 -217.19432164</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7   56.50345206   90.39022461    0.08620437 -113.57776122 -162.05538893</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8   -3.33752286  262.34380886   16.34115827   43.71081931  259.13749416</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9                                                                      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             Nov           Dec</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 -140.30056015 -192.48082986</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2    0.28149297  105.08782557</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 -145.34420895   75.64974751</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  251.98467953  -10.32121709</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  194.63125342  -80.29562314</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 -208.41758498   -7.63383431</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  -35.03985770  183.06785230</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8   39.01823306 -120.98299385</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9                            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $breakpoints</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1]   0  28 100</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $trend</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            Jan          Feb          Mar          Apr          May          Jun</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  -2.58068534  -5.22031428  -7.85994322 -11.66249675 -15.46505027 -20.24872233</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 -71.37236741 -79.35121240 -87.33005740 -85.73692004 -84.14378268 -70.14213019</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   5.29525755   8.12230681  10.94935607   6.20807710   1.46679812  -5.26470287</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  12.12075784   6.20232976   0.28390168   4.58190374   8.87990580  12.03022044</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5   7.82859501   7.97857547   8.12855592   0.68594670  -6.75666253 -10.45680279</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  22.18232637  29.05741313  35.93249990  31.65748635  27.38247280  17.42298235</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 -31.34554077 -29.52398082 -27.70242087 -21.77575607 -15.84909127  -7.62981942</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  27.23752034  38.44764094  49.65776153  60.15099926  70.64423699  68.79267994</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9 -36.47875612 -56.56470068 -76.65064523 -98.29738163                          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            Jul          Aug          Sep          Oct          Nov          Dec</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 -25.03239439 -30.08582834 -35.13926228 -42.06844238 -48.99762247 -60.18499494</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 -56.14047769 -42.49951508 -28.85855246 -19.32577573  -9.79299899  -2.24887072</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 -11.99620386  -7.79186271  -3.58752156   5.97956019  15.54664193  13.83369988</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  15.18053508   8.83694475   2.49335441  -1.07112296  -4.63560033   1.59649734</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 -14.15694304 -10.93245758  -7.70797212  -1.93055623   3.84685967  13.01459302</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6   7.46349189  -1.43600089 -10.33549366 -17.81748480 -25.29947594 -28.32250835</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7   0.58945242   6.75330236  12.91715231  14.97607049  17.03498868  22.13625451</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  66.94112288  50.59555288  34.24998288  17.07958925  -0.09080439 -18.28478025</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9                                                                              </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $seasonality</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           Jan         Feb         Mar         Apr         May         Jun</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   -4.143600   13.869559  -44.598627   39.914473   40.702863  -41.419268</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2   -4.143600   13.869559  -44.598627   39.914473   40.702863  -41.419268</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   -4.143600   13.869559  -44.598627   39.914473   40.702863  -41.419268</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   -4.143600   13.869559  -44.598627   39.914473   40.702863  -41.419268</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5   -4.143600   13.869559  -44.598627   39.914473   40.702863  -41.419268</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6   -4.143600   13.869559  -44.598627   39.914473   40.702863  -41.419268</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7   -4.143600   13.869559  -44.598627   39.914473   40.702863  -41.419268</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8   -4.143600   13.869559  -44.598627   39.914473   40.702863  -41.419268</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9   -4.143600   13.869559  -44.598627   39.914473                        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           Jul         Aug         Sep         Oct         Nov         Dec</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 -102.162131   29.768482   -2.671910   50.845392   12.937743    6.957018</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 -102.162131   29.768482   -2.671910   50.845392   12.937743    6.957018</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 -102.162131   29.768482   -2.671910   50.845392   12.937743    6.957018</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 -102.162131   29.768482   -2.671910   50.845392   12.937743    6.957018</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 -102.162131   29.768482   -2.671910   50.845392   12.937743    6.957018</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 -102.162131   29.768482   -2.671910   50.845392   12.937743    6.957018</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 -102.162131   29.768482   -2.671910   50.845392   12.937743    6.957018</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 -102.162131   29.768482   -2.671910   50.845392   12.937743    6.957018</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9                                                                        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $remainder</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           Jan         Feb         Mar         Apr         May         Jun</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  -11.219275   14.379825 -120.373242   47.220777    1.667269   90.091390</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2   66.394582  -58.715982   33.970805 -112.906736  102.470228 -214.012562</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  119.710332   57.741709  -77.602370  -88.126273 -101.672023   53.180587</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 -149.371511  166.511518  260.845855   90.945952  -52.267880  -78.459899</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  -75.308099  -36.651415  -31.353113  -31.176270   -5.246150   79.022117</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  -69.458128  -10.619001   20.516865   38.636551   81.295147   85.328302</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7   -1.424439  -93.494411   19.962853  166.447654  -22.130850   64.133271</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8   35.046185   73.910426  -67.778289  -36.765961    3.938177  -72.130203</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9   99.675241  -99.099465  -24.307161  -60.842252                        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           Jul         Aug         Sep         Oct         Nov         Dec</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 -189.805160  101.945386  281.191857    6.863496  -91.302938 -132.295835</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  -12.490026   20.156060   -2.880110   42.850399   10.074492  107.336696</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  154.664952 -161.451786  112.808042  -57.252178 -160.890851   61.816048</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 -291.063639  -48.876189 -132.342972  235.433461  256.620280  -11.917714</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  -19.977899   -7.534676  -78.769872  -85.624971  190.784394  -93.310216</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6   79.720979  143.127598  -56.335210 -199.376837 -183.118109   20.688674</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7   89.800772   -6.667098 -126.494914 -177.031459  -52.074846  160.931598</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  195.402686  -34.254395    9.460836  242.057905   39.109037 -102.698214</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9                                                                        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span><span class="fu">StructuralDecompose</span><span class="op">(</span>Data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">50</span>, min <span class="op">=</span> <span class="fl">1</span>, max <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $anomalies</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> logical(0)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $trend_line</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 4.741583 4.705547 4.674554 4.648930 4.628688 4.613326 4.601885 4.593450</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [9] 4.587111 4.581766 4.576132 4.568982 4.559370 4.546867 4.532553 4.521839</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [17] 4.534063 4.589590 4.657936 4.729320 4.793110 4.846101 4.889346 4.918691</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [25] 4.927693 4.918318 4.897671 4.874072 4.854765 4.840825 4.827217 4.816159</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [33] 4.809651 4.804577 4.814989 4.832736 4.859121 4.891714 4.928841 4.969714</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [41] 5.013925 5.060867 5.109985 5.160674 5.212156 5.263966 5.316065 5.368454</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [49] 5.421298 5.475048</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $Deseaonalized_Series</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          Jan        Feb        Mar        Apr        May        Jun        Jul</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  2.2942132 -2.9460018  1.5177794  2.8821543  2.2980265 -3.1348496 -2.6738695</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 -2.0877936  2.4889219 -2.4447656 -2.7815152  0.3241654  3.1078785 -2.6625039</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 -3.0100972  3.0522068  4.2355021 -3.5334080 -1.7964019 -0.7682843  2.0968200</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  1.7814574 -3.3945737 -3.2978350  3.3542661 -0.9934984  0.6423943  3.1015511</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  1.6922528  1.3970339                                                       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          Aug        Sep        Oct        Nov        Dec</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  0.8710065  0.1370711 -1.5288317 -2.2906500 -0.3831463</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  2.0403196  2.5143364  1.3409982  3.4649483 -2.2936552</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 -1.9325530  0.5988324 -1.9110184 -1.5627956  3.9800208</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 -1.1312462 -3.4171878  1.8867694  0.1312699 -1.4684817</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5                                                       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $breakpoints</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1]  0 50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $trend</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            Jan          Feb          Mar          Apr          May          Jun</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  0.823413283  0.632605225  0.441797166  0.262787741  0.083778315 -0.079349877</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 -0.739603136 -0.571677334 -0.403751532 -0.183288180  0.037175173  0.185694982</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  0.432793561  0.276409875  0.120026189 -0.017290100 -0.154606389 -0.166255809</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 -0.066297613 -0.030293116  0.005711381 -0.001438827 -0.008589034  0.021777731</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  0.442002062  0.510989832                                                    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            Jul          Aug          Sep          Oct          Nov          Dec</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 -0.242478070 -0.403274131 -0.564070193 -0.692955150 -0.821840108 -0.780721622</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  0.334214791  0.448764029  0.563313268  0.593077841  0.622842415  0.527817988</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 -0.177905229 -0.214921062 -0.251936895 -0.251035525 -0.250134155 -0.158215884</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  0.052144496  0.119395267  0.186646038  0.250383430  0.314120821  0.378061442</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5                                                                              </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $seasonality</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          Jan        Feb        Mar        Apr        May        Jun        Jul</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 -0.8863444  1.3021617  0.8408713  0.0158242  0.8632685  0.2770575  1.5065295</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 -0.8863444  1.3021617  0.8408713  0.0158242  0.8632685  0.2770575  1.5065295</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 -0.8863444  1.3021617  0.8408713  0.0158242  0.8632685  0.2770575  1.5065295</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 -0.8863444  1.3021617  0.8408713  0.0158242  0.8632685  0.2770575  1.5065295</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 -0.8863444  1.3021617                                                       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          Aug        Sep        Oct        Nov        Dec</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 -0.5191122 -0.3218883 -0.9014784 -0.9775850 -1.1993041</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 -0.5191122 -0.3218883 -0.9014784 -0.9775850 -1.1993041</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 -0.5191122 -0.3218883 -0.9014784 -0.9775850 -1.1993041</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 -0.5191122 -0.3218883 -0.9014784 -0.9775850 -1.1993041</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5                                                       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $remainder</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          Jan        Feb        Mar        Apr        May        Jun        Jul</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  1.4708000 -3.5786071  1.0759822  2.6193665  2.2142482 -3.0554998 -2.4313915</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 -1.3481905  3.0605992 -2.0410141 -2.5982270  0.2869902  2.9221835 -2.9967187</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 -3.4428908  2.7757969  4.1154759 -3.5161179 -1.6417956 -0.6020285  2.2747253</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  1.8477550 -3.3642805 -3.3035464  3.3557049 -0.9849094  0.6206165  3.0494066</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  1.2502507  0.8860441                                                       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          Aug        Sep        Oct        Nov        Dec</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  1.2742806  0.7011413 -0.8358765 -1.4688099  0.3975754</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  1.5915555  1.9510231  0.7479204  2.8421059 -2.8214732</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 -1.7176319  0.8507693 -1.6599828 -1.3126614  4.1382366</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 -1.2506414 -3.6038339  1.6363859 -0.1828509 -1.8465431</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5                                                       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside></div>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p></p><p>Developed by Allen Daniel Sunny.</p>
+  <p></p><p>Developed by Allen Sunny.</p>
 </div>
 
 <div class="pkgdown-footer-right">

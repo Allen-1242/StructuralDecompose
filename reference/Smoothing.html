@@ -53,12 +53,7 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">Smoothing</span><span class="op">(</span></span>
-<span>  <span class="va">timeseries</span>,</span>
-<span>  frequency <span class="op">=</span> <span class="fl">52</span>,</span>
-<span>  smoothening_algorithm <span class="op">=</span> <span class="st">"lowess"</span>,</span>
-<span>  breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">Smoothing</span><span class="op">(</span><span class="va">timeseries</span>, frequency <span class="op">=</span> <span class="fl">52</span>, smoothening_algorithm <span class="op">=</span> <span class="st">"lowess"</span>, <span class="va">breaks</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -90,12 +85,33 @@
 <p>The smoothened time series</p>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">Smoothing</span><span class="op">(</span>timeseries <span class="op">=</span> <span class="fu">StructuralDecompose</span><span class="fu">::</span><span class="va"><a href="Nile_dataset.html">Nile_dataset</a></span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span>, breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">50</span>, <span class="fl">80</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 1124.7002 1120.0555 1115.7059 1111.6474 1107.8713 1104.3873 1101.1868</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [8] 1098.2216 1095.4193 1092.7045 1090.0057 1087.2377 1084.3165 1081.2022</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [15] 1078.0712 1075.6112 1069.9872 1062.6761 1054.0972 1044.8792 1035.0753</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [22] 1024.7443 1014.1921 1003.6909  993.0625  981.6105  968.5932  953.7479</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [29]  937.2038  919.7212  902.8152  887.8188  881.5851  876.3718  871.3876</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [36]  866.6127  862.0841  857.7852  853.6761  849.7266  845.9306  842.3033</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [43]  838.8655  835.6435  832.6302  829.7861  827.0713  798.9009  801.9204</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [50]  805.3126  809.1336  813.3608  817.8961  822.6373  827.4037  831.9377</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [57]  836.0001  841.8590  846.5545  849.2619  849.4481  847.4104  843.9194</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [64]  839.6215  835.5942  832.3450  829.0320  825.4557  828.2389  830.8036</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [71]  833.5662  836.8415  840.8017  845.5189  850.9551  857.0311  863.6528</span>
+<span class="r-in"><span><span class="fu">Smoothing</span><span class="op">(</span>timeseries <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">50</span>, min <span class="op">=</span> <span class="fl">1</span>, max <span class="op">=</span> <span class="fl">10</span><span class="op">)</span>, breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">20</span>, <span class="fl">30</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 5.132942 5.466005 5.822235 6.201887 6.540293 6.605978 6.608066 6.594017</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [9] 6.367760 6.038101 5.963124 6.189623 6.177309 5.984342 5.819930 5.647555</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [17] 5.410994 7.515658 5.928090 4.268974 2.639033 2.428657 3.214693 4.290920</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [25] 4.848414 4.005670 3.056488</span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside></div>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p></p><p>Developed by Allen Daniel Sunny.</p>
+  <p></p><p>Developed by Allen Sunny.</p>
 </div>
 
 <div class="pkgdown-footer-right">

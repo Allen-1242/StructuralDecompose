@@ -25,6 +25,7 @@
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/Decomposition.html">Decomposition</a>
+    <a class="dropdown-item" href="../articles/Example-Walkthrough.html">Example-Walkthrough</a>
     <a class="dropdown-item" href="../articles/package_intro.html">Introduction</a>
   </div>
 </li>
@@ -71,7 +72,7 @@
 
 
 <dt>break_algorithm</dt>
-<dd><p>Breakpoint algorithm to be used. Defaults to strcchange</p></dd>
+<dd><p>Breakpoint algorithm to be used. Defaults to strucchange</p></dd>
 
 
 <dt>break_level</dt>
@@ -85,12 +86,21 @@
 <p>A list of breakpoints</p>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">BreakPoints</span><span class="op">(</span>timeseries <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span>, frequency <span class="op">=</span> <span class="fl">52</span>, break_level <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]   0   5  11  17  22  28  33  38  43  48  53  59  64  69  74  79  84  89  94</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [20] 100</span>
+<span class="r-in"><span><span class="fu">BreakPoints</span><span class="op">(</span>timeseries <span class="op">=</span> <span class="fu">StructuralDecompose</span><span class="fu">::</span><span class="va"><a href="Nile_dataset.html">Nile_dataset</a></span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span>, frequency <span class="op">=</span> <span class="fl">52</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1]   0  28 100</span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside></div>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p></p><p>Developed by .</p>
+  <p></p><p>Developed by Allen Sunny.</p>
 </div>
 
 <div class="pkgdown-footer-right">
