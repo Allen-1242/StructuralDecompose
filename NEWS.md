@@ -1,3 +1,5 @@
+# StructuralDecompose (development version)
+
 # StructuralDecompose 0.1.0
 * Updated examples for all functions 
 

@@ -1,7 +1,7 @@
 Type: Package
 Package: StructuralDecompose
 Title: Decomposes a Level Shifted Time Series
-Version: 0.1.0
+Version: 0.1.0.9000
 Authors@R: person(given = "Allen",
              family = "Sunny",
              role = c("aut", "cre"),
