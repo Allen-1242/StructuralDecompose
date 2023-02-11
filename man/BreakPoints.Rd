@@ -14,7 +14,7 @@ BreakPoints(
 \arguments{
 \item{timeseries}{Given time series}
 
-\item{frequency}{Tiemseries frequency, defaults to 12 points}
+\item{frequency}{Timeseries frequency, defaults to 12 points}
 
 \item{break_algorithm}{Breakpoint algorithm to be used. Defaults to strucchange}
 

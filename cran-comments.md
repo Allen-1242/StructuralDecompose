@@ -2,16 +2,9 @@
 
 0 errors | 0 warnings | 1 note
 
-* This is a new release.
+* Changed CRAN version to 0.1.1 
 
-* There is 1 Note regrading spelling in the Description file. All words indicated are proper nouns.
+* Fixed spelling in Description file by enclosing package names in single quotes
 
-* There is currently no doi/arxiv/ISBN documentation available 
+* There is no associated paper right now with doi or ArXiv. The package site is the only source of documentation. Does the the package need a linked publication? 
 
-* Updated examples for all functions 
-
-* Moved from print() to warnings() for all console output
-
-* Updated the description file with Authors@R syntax 
-
-* Extended the description paragraph 

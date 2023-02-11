@@ -10,7 +10,7 @@ NULL
 #' Generation of breakpoints
 #'
 #' @param timeseries Given time series
-#' @param frequency Tiemseries frequency, defaults to 12 points
+#' @param frequency Timeseries frequency, defaults to 12 points
 #' @param break_algorithm Breakpoint algorithm to be used. Defaults to strucchange
 #' @param break_level Additional parameters for breakpoint algorithm
 #'
