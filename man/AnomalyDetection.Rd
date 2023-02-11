@@ -15,7 +15,7 @@ AnomalyDetection(
 \arguments{
 \item{timeseries}{Given time series}
 
-\item{frequency}{Tiemseries frequency, defaults to 12 points}
+\item{frequency}{Timeseries frequency, defaults to 12 points}
 
 \item{conf_level}{Confidence level for Anomaly detection}
 
@@ -31,5 +31,6 @@ Automatic Anomaly detection
 }
 \examples{
 AnomalyDetection(timeseries = StructuralDecompose::Nile_dataset[,1], breaks = c(4, 50, 80))
+
 AnomalyDetection(timeseries = runif(n = 50, min = 1, max = 10),  breaks = c(4, 20, 30))
 }

@@ -21,5 +21,6 @@ Minimum level length checks
 }
 \examples{
 LevelCheck(timeseries = StructuralDecompose::Nile_dataset[,1], breaks = c(1,4,5))
+
 LevelCheck(timeseries = runif(n = 50, min = 1, max = 10), breaks = c(1,4,5))
 }

@@ -25,5 +25,6 @@ Smoothening of the time series
 }
 \examples{
 Smoothing(timeseries = StructuralDecompose::Nile_dataset[,1], breaks = c(4, 50, 80))
+
 Smoothing(timeseries = runif(n = 50, min = 1, max = 10), breaks = c(4, 20, 30))
 }

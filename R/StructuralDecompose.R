@@ -86,6 +86,7 @@ BreakPoints <- function(timeseries, frequency = 52, break_algorithm = 'strucchan
 #' @param frequency Timeseries frequency, defaults to 12 points
 #' @examples
 #' MedianCleaning(timeseries = StructuralDecompose::Nile_dataset[,1], breaks = c(1,4,5))
+#'
 #' MedianCleaning(timeseries = runif(n = 50, min = 1, max = 10), breaks = c(1,4,5))
 #' @return The series cleaned with the median check
 #' @export
@@ -219,9 +220,10 @@ MedianCleaning <- function(timeseries, median_level = 0.5, breaks, frequency = 5
 #' @param timeseries Given time series
 #' @param mean_level Mean distance between two levels
 #' @param breaks breakpoints returned
-#' @param frequency Tiemseries frequency, defaults to 12 points
+#' @param frequency Timeseries frequency, defaults to 12 points
 #' @examples
 #' MeanCleaning(timeseries = StructuralDecompose::Nile_dataset[,1], breaks = c(1,4,5), frequency = 1)
+#'
 #' MeanCleaning(timeseries = runif(n = 50, min = 1, max = 10), breaks = c(1,4,5), frequency = 12)
 #' @return The series cleaned with the mean check
 #' @export
@@ -266,6 +268,7 @@ MeanCleaning <- function(timeseries, mean_level = 0.5, breaks, frequency = 52)
 #' @param breaks breakpoints returned
 #' @examples
 #' LevelCheck(timeseries = StructuralDecompose::Nile_dataset[,1], breaks = c(1,4,5))
+#'
 #' LevelCheck(timeseries = runif(n = 50, min = 1, max = 10), breaks = c(1,4,5))
 #' @return The series cleaned with the minimum level check
 #' @importFrom utils tail
@@ -313,13 +316,14 @@ LevelCheck <- function(timeseries, level_length = 10, breaks)
 #' Automatic Anomaly detection
 #'
 #' @param timeseries Given time series
-#' @param frequency Tiemseries frequency, defaults to 12 points
+#' @param frequency Timeseries frequency, defaults to 12 points
 #' @param conf_level Confidence level for Anomaly detection
 #' @param breaks breakpoints identified
 #' @param window_len Window length for anomaly detection
 #' @param window_len Window length for anomaly detection
 #' @examples
 #' AnomalyDetection(timeseries = StructuralDecompose::Nile_dataset[,1], breaks = c(4, 50, 80))
+#'
 #' AnomalyDetection(timeseries = runif(n = 50, min = 1, max = 10),  breaks = c(4, 20, 30))
 #' @return the list of anomalies in the time series, along with the time series plot
 #' @importFrom stats mad
@@ -427,12 +431,12 @@ AnomalyDetection <- function(timeseries, frequency = 52, conf_level = 1.5, break
 #' @param lowess Lowess smoothener
 #' @examples
 #' Smoothing(timeseries = StructuralDecompose::Nile_dataset[,1], breaks = c(4, 50, 80))
+#'
 #' Smoothing(timeseries = runif(n = 50, min = 1, max = 10), breaks = c(4, 20, 30))
 #' @return The smoothened time series
 #' @importFrom utils tail
 #' @importFrom stats lowess
 #' @importFrom utils tail
-
 
 #' @export
 #'
@@ -498,6 +502,7 @@ Smoothing <- function(timeseries, frequency = 52, smoothening_algorithm = 'lowes
 #' @param plot True of False indicating if you want the internal plots to be generated
 #' @examples
 #' StructuralDecompose(Data = StructuralDecompose::Nile_dataset[,1])
+#'
 #' StructuralDecompose(Data = runif(n = 50, min = 1, max = 10))
 #' @return The decomposed time series along with a host of other metrics
 #' @importFrom stats ts

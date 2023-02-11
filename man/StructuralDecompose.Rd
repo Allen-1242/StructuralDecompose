@@ -49,5 +49,6 @@ Main decomposition algorithm
 }
 \examples{
 StructuralDecompose(Data = StructuralDecompose::Nile_dataset[,1])
+
 StructuralDecompose(Data = runif(n = 50, min = 1, max = 10))
 }

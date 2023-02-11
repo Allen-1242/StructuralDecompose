@@ -23,5 +23,6 @@ Median level checks
 }
 \examples{
 MedianCleaning(timeseries = StructuralDecompose::Nile_dataset[,1], breaks = c(1,4,5))
+
 MedianCleaning(timeseries = runif(n = 50, min = 1, max = 10), breaks = c(1,4,5))
 }
