@@ -14,10 +14,19 @@ The algorithm outputs the decomposed trend, seasonality, residuals as well as an
 
 ## Installation
 
-You can install the development version of StructuralDecompose like so:
+The StructuralDecompose Package is now available on CRAN
+
+You can install the development version of TangledFeatures like so:
+
+| Type        | Source     | Command                                                                       |
+|-------------|------------|-------------------------------------------------------------------------------|
+| Release     | CRAN       | `install.packages("StructuralDecompose")`                                             |
+| Development | Github     | `install_github("StructuralDecompose/StructuralDecompose")` |
+
+Once you have downloaded the package, you can then load it using:
 
 ``` r
-package(StructuralDecompose)
+library(StructuralDecompose)
 install_github("StructuralDecompose/StructuralDecompose")
 ```
 
