@@ -33,4 +33,6 @@ You can install it like so:
 
 Once installed, load the package using:
 
-\`\`\`r library(StructuralDecompose)
+``` r
+library(StructuralDecompose)
+```

@@ -33,3 +33,4 @@ Once installed, load the package using:
 
 ```r
 library(StructuralDecompose)
+```
