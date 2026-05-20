@@ -8,6 +8,8 @@ status](https://www.r-pkg.org/badges/version/StructuralDecompose)](https://CRAN.
 <!-- badges: end --> **Note:** Website documentation is still under
 construction.
 
+Published write up, will be coming soon to the R Journal : https://arxiv.org/pdf/2510.04974
+
 **StructuralDecompose** is an algorithm suited to the decomposition of a
 time series into its component terms of trend, seasonality, and
 residuals. It is well suited to decompose a series in the presence of
