@@ -1,131 +1,182 @@
-#StructuralDecompose
-#Novel Method to decompose a levelShifted time series
+# StructuralDecompose
+# Novel method to decompose a level-shifted time series
 
-
+# NOTE: confirm the @format and @source fields below match the shipped data object
 #' Nile River Dataset
+#'
+#' Annual flow measurements of the river Nile, included as the example
+#' series for the package.
+#'
+#' @format A data frame with 100 rows and 1 numeric column
+#' @source Derived from the classic Nile river flow series
 #' @name Nile_dataset
+#' @docType data
 #' @keywords datasets
 NULL
 
 #' Generation of breakpoints
 #'
 #' @param timeseries Given time series
-#' @param frequency Timeseries frequency, defaults to 12 points
-#' @param break_algorithm Breakpoint algorithm to be used. Defaults to strucchange
-#' @param break_level Additional parameters for breakpoint algorithm
+#' @param frequency Time series frequency, defaults to 52 points
+#' @param break_algorithm Breakpoint algorithm to be used. One of
+#'   'strucchange', 'changepoint' or 'segmented'. Defaults to 'strucchange'
+#' @param break_level Additional parameter for the breakpoint algorithm.
+#'   For 'strucchange' this is the minimal segment size h
 #'
-#' @return A list of breakpoints
+#' @return A numeric vector of breakpoints, always including 0 and the
+#'   series length
 #' @examples
 #' BreakPoints(timeseries = seq(100), frequency = 52, break_level = 0.05)
-#' BreakPoints(timeseries = StructuralDecompose::Nile_dataset[,1], frequency = 52)
-#' @importFrom changepoint cpts
-#' @importFrom segmented segmented
-
-
+#' BreakPoints(timeseries = StructuralDecompose::Nile_dataset[,1],
+#'             frequency = 52, break_level = 0.1)
+#' @importFrom stats lm
 #' @export
 #'
 BreakPoints <- function(timeseries, frequency = 52, break_algorithm = 'strucchange', break_level = 0.01)
 {
-  #Strucchange algorithm
-  if(break_algorithm == 'strucchange')
+  if (!break_algorithm %in% c('strucchange', 'changepoint', 'segmented'))
   {
-    mvalue <- NA
-    bp <- NA
-    
-    tryCatch(
-      {
-        mvalue <- strucchange::breakpoints(timeseries ~ 1, h = break_level)
-      }, error = function(e){bp <<- NA}
+    stop("Unknown break_algorithm. Use 'strucchange', 'changepoint' or 'segmented'.")
+  }
+
+  bp <- NA
+
+  # Strucchange algorithm
+  if (break_algorithm == 'strucchange')
+  {
+    bp <- tryCatch(
+      strucchange::breakpoints(timeseries ~ 1, h = break_level)$breakpoints,
+      error = function(e) NA
     )
-    bp <- mvalue$breakpoints
   }
-  
-  #Changepoint
-  if(break_algorithm == 'changepoint')
+
+  # Changepoint
+  if (break_algorithm == 'changepoint')
   {
-    changepoints <- changepoint::cpt.mean(timeseries, method="BinSeg")
-    
-    bp <-  cpts(changepoints)
-    
-    if(is.na(bp)){warning('Change break value , min segment size must be larger than the number of regressors')}
-    
+    changepoints <- tryCatch(
+      changepoint::cpt.mean(timeseries, method = "BinSeg"),
+      error = function(e) NULL
+    )
+
+    if (is.null(changepoints))
+    {
+      bp <- NA
+    } else
+    {
+      bp <- changepoint::cpts(changepoints)
+    }
+
+    if (length(bp) == 0 || anyNA(bp))
+    {
+      bp <- NA
+      warning('No changepoints found; consider adjusting the minimum segment size')
+    }
   }
-  
-  #Segmented
-  if(break_algorithm == 'segmented')
+
+  # Segmented
+  if (break_algorithm == 'segmented')
   {
-    changepoints <- segmented::segmented(timeseries)$psi
-    
-    bp <-  changepoints
-    
-    if(is.na(bp)){warning('Change break value , min segment size must be larger than the number of regressors')}
-    
+    index <- seq_along(timeseries)
+    fit <- stats::lm(timeseries ~ index)
+
+    psi <- tryCatch(
+      segmented::segmented(fit, seg.Z = ~index)$psi,
+      error = function(e) NULL
+    )
+
+    if (is.null(psi) || NROW(psi) == 0)
+    {
+      bp <- NA
+      warning('No segmented breakpoints found; consider a different algorithm')
+    } else
+    {
+      est <- if (is.matrix(psi)) psi[, "Est."] else psi["Est."]
+      bp <- sort(unique(round(as.numeric(est))))
+      bp <- bp[bp > 0 & bp < length(timeseries)]
+
+      if (length(bp) == 0)
+      {
+        bp <- NA
+      }
+    }
   }
-  
-  #Writing the breakpoints
-  breaks <- vector()
-  
-  if(any(is.na(bp)))
+
+  # Writing the breakpoints
+  if (any(is.na(bp)))
   {
     breaks <- c(0, length(timeseries))
-  }else
+  } else
   {
-    breaks <- c(0, bp, length(timeseries))
+    breaks <- sort(unique(c(0, bp, length(timeseries))))
   }
-  
-  
+
   return(breaks)
-  
 }
 
-#' Seasonal Breaks level checks
+#' Seasonal breakpoint pruning
 #'
-#' @param timeseries Given time series
-#' @param tolerance Tolerence of seasonality values
-#' @param min_repetitions Minimun repititions for detecting seasonality
-#' @param frequency Timeseries frequency, defaults to 12 points
+#' Removes breakpoints that recur at approximately the seasonal frequency,
+#' since these are likely seasonal artefacts rather than structural level
+#' shifts. The first and last entries of \code{breaks} are treated as series
+#' boundaries and are always retained.
+#'
+#' @param breaks Numeric vector of candidate breakpoints, including the
+#'   series boundaries (0 and the series length)
+#' @param frequency Time series frequency
+#' @param tolerance Relative tolerance around \code{frequency} when matching
+#'   seasonal spacing
+#' @param min_repetitions Minimum number of linked breakpoints required to
+#'   classify a group as seasonal
 #' @examples
-#' MedianCleaning(timeseries = StructuralDecompose::Nile_dataset[,1], breaks = c(1,4,5))
-#'
-#' MedianCleaning(timeseries = runif(n = 50, min = 1, max = 10), breaks = c(1,4,5))
-#' @return The series cleaned with the median check
+#' SeasonalBreaks(breaks = c(0, 52, 104, 156, 200), frequency = 52)
+#' SeasonalBreaks(breaks = c(0, 30, 75, 200), frequency = 52)
+#' @return Numeric vector of breakpoints with seasonal repeats removed
 #' @export
 #'
-SeasonalBreaks <- function(breaks, frequency, tolerance = 0.10, min_repetitions = 3) 
+SeasonalBreaks <- function(breaks, frequency, tolerance = 0.10, min_repetitions = 3)
 {
-  t <- sort(unique(as.numeric(breaks)))
-  n <- length(t)
-  
-  if (n < min_repetitions)
+  brks <- sort(unique(as.numeric(breaks)))
+  n_brks <- length(brks)
+
+  if (n_brks <= 2)
   {
-    return(t)
+    return(brks)
   }
-    
-  
-  # --- Step 2: Define tolerance band (relative) ---
+
+  # Boundaries never participate in seasonal clustering and are always kept
+  bounds <- c(brks[1], brks[n_brks])
+  interior <- brks[-c(1, n_brks)]
+  m <- length(interior)
+
+  if (m < min_repetitions)
+  {
+    return(brks)
+  }
+
+  # Tolerance band (relative)
   freq_min <- frequency * (1 - tolerance)
   freq_max <- frequency * (1 + tolerance)
-  
-  # --- Step 3: Build adjacency matrix of "near-frequency" links ---
-  diff_mat <- abs(outer(t, t, "-"))
+
+  # Adjacency matrix of near-frequency links between interior breaks
+  diff_mat <- abs(outer(interior, interior, "-"))
   adj <- (diff_mat >= freq_min) & (diff_mat <= freq_max)
-  diag(adj) <- FALSE   # no self-links
-  
-  visited <- rep(FALSE, n)
+  diag(adj) <- FALSE
+
+  visited <- rep(FALSE, m)
   groups <- list()
-  
-  for (i in seq_len(n)) 
+
+  for (i in seq_len(m))
   {
-    if (!visited[i]) 
+    if (!visited[i])
     {
       stack <- c(i)
       component <- c()
-      
-      while (length(stack) > 0) 
+
+      while (length(stack) > 0)
       {
         node <- stack[1]
         stack <- stack[-1]
-        if (!visited[node]) 
+        if (!visited[node])
         {
           visited[node] <- TRUE
           component <- c(component, node)
@@ -136,167 +187,163 @@ SeasonalBreaks <- function(breaks, frequency, tolerance = 0.10, min_repetitions 
       groups <- c(groups, list(component))
     }
   }
-  
-  # --- Step 5: Remove groups that have enough seasonal hits ---
-  to_remove <- rep(FALSE, n)
-  
-  for (g in groups) 
+
+  # Remove groups that have enough seasonal hits
+  to_remove <- rep(FALSE, m)
+
+  for (g in groups)
   {
-    if (length(g) >= min_repetitions) 
+    if (length(g) >= min_repetitions)
     {
       to_remove[g] <- TRUE
     }
   }
-  
-  # --- Step 6: Return filtered set ---
-  t_filtered <- t[!to_remove]
-  if (length(t_filtered) < 2)
-  {
-    t_filtered <- c(min(t), max(t))
-  }
-  
-  return(t_filtered)
+
+  # Return filtered set with boundaries re-attached
+  return(sort(unique(c(bounds, interior[!to_remove]))))
 }
 
 #' Median level checks
 #'
 #' @param timeseries Given time series
-#' @param median_level Median distance between two levels
+#' @param median_level Maximum relative median distance between two adjacent
+#'   levels for them to be merged
 #' @param breaks Breaks identified
-#' @param frequency Timeseries frequency, defaults to 12 points
+#' @param frequency Time series frequency, defaults to 52 points
+#' @param max_iter Maximum number of merge iterations, used as an infinite
+#'   loop guard
 #' @examples
 #' MedianCleaning(timeseries = StructuralDecompose::Nile_dataset[,1], breaks = c(1,4,5))
 #'
 #' MedianCleaning(timeseries = runif(n = 50, min = 1, max = 10), breaks = c(1,4,5))
-#' @return The series cleaned with the median check
+#' @return The cleaned set of breakpoints
+#' @importFrom stats median
 #' @export
 #'
-
-MedianCleaning <- function(timeseries, median_level = 0.1, breaks, frequency = 52, max_iter = 10000) 
+MedianCleaning <- function(timeseries, median_level = 0.1, breaks, frequency = 52, max_iter = 10000)
 {
-  
   # Initialize breakpoints
-  if (any(is.na(breaks))) 
+  if (any(is.na(breaks)))
   {
-    t <- c(0, length(timeseries))
-  } else 
+    brks <- c(0, length(timeseries))
+  } else
   {
-    t <- sort(unique(breaks))
+    brks <- sort(unique(breaks))
   }
-  
-  # --- Seasonal repetition pruning ---
-  if (frequency != 1) 
+
+  # Seasonal repetition pruning
+  if (frequency != 1)
   {
-    t <- SeasonalBreaks(breaks = t, frequency = frequency,  tolerance = 0.10, min_repetitions = 3)
+    brks <- SeasonalBreaks(breaks = brks, frequency = frequency, tolerance = 0.10, min_repetitions = 3)
   }
-  
-  # --- Recursive median-based merging ---
+
+  # Recursive median-based merging
   iter <- 0L
-  repeat 
+  repeat
   {
     iter <- iter + 1L
-    if (iter > max_iter) stop("Max iterations reached — possible infinite loop")
-    if (length(t) <= 2) break
+    if (iter > max_iter) stop("Max iterations reached; possible infinite loop")
+    if (length(brks) <= 2) break
 
     merged <- FALSE
 
-    # scan triplets left->right and drop at most one boundary per pass
-    for (i in seq_len(length(t) - 2L)) 
+    # Scan triplets left to right and drop at most one boundary per pass
+    for (i in seq_len(length(brks) - 2L))
     {
-      L  <- t[i]
-      Lr <- t[i + 1L]
-      R  <- t[i + 2L]
+      L  <- brks[i]
+      Lr <- brks[i + 1L]
+      R  <- brks[i + 2L]
 
-      # guard invalid/empty segments
+      # Guard invalid or empty segments
       if (Lr <= L || R <= Lr)
       {
         next
       }
-      
+
       seg1 <- timeseries[(L + 1L):Lr]
       seg2 <- timeseries[(Lr + 1L):R]
-      
-      if (length(seg1) == 0L || length(seg2) == 0L) 
+
+      if (length(seg1) == 0L || length(seg2) == 0L)
       {
         next
       }
-      
+
       mid1 <- median(seg1, na.rm = TRUE)
       mid2 <- median(seg2, na.rm = TRUE)
 
-      dist <- abs(mid1 - mid2) / max(abs(mid1), abs(mid2), 1e-7) #0 is almost same and 1 is very different
+      # 0 is almost the same, 1 is very different
+      dist <- abs(mid1 - mid2) / max(abs(mid1), abs(mid2), 1e-7)
 
-      if (dist < median_level) #Higher the median, more merging happens i.e we drop more breaks
+      # Higher median_level means more merging, i.e. more breaks dropped
+      if (dist < median_level)
       {
         # LEFT MERGE: drop the start of the right segment
-        t <- t[-(i + 1L)]
+        brks <- brks[-(i + 1L)]
         merged <- TRUE
         break
       }
     }
-    
-    if (!merged) 
+
+    if (!merged)
     {
       break
     }
   }
 
-  return(t)
+  return(brks)
 }
 
 #' Mean level checks
 #'
 #' @param timeseries Given time series
-#' @param mean_level Mean distance between two levels
-#' @param breaks breakpoints returned
-#' @param frequency Timeseries frequency, defaults to 12 points
+#' @param mean_level Minimum relative mean distance between the points on
+#'   either side of a breakpoint for it to be retained
+#' @param breaks Breakpoints returned
+#' @param window Number of points on each side of a breakpoint used to
+#'   compute the local means
 #' @examples
-#' MeanCleaning(timeseries = StructuralDecompose::Nile_dataset[,1], breaks = c(1,4,5), frequency = 1)
+#' MeanCleaning(timeseries = StructuralDecompose::Nile_dataset[,1], breaks = c(1,4,5))
 #'
-#' MeanCleaning(timeseries = runif(n = 50, min = 1, max = 10), breaks = c(1,4,5), frequency = 12)
-#' @return The series cleaned with the mean check
+#' MeanCleaning(timeseries = runif(n = 50, min = 1, max = 10), breaks = c(1,4,5))
+#' @return The cleaned set of breakpoints
 #' @export
 #'
-
-MeanCleaning <- function(timeseries, mean_level = 0.25, breaks,  window = 4) 
+MeanCleaning <- function(timeseries, mean_level = 0.25, breaks, window = 4)
 {
   n <- length(timeseries)
-  
+
   if (length(breaks) <= 2)
   {
     return(breaks)  # no internal breaks to clean
   }
-  
+
   breaks_new <- c(0)
-  
-  for (b in breaks[-c(1, length(breaks))]) 
+
+  for (b in breaks[-c(1, length(breaks))])
   {  # exclude first (0) and last (n)
-    
+
     # Define local window safely within bounds
     start_before <- max(1, b - window)
     end_before   <- max(1, b - 1)
-    
+
     start_after  <- min(n, b + 1)
     end_after    <- min(n, b + window)
-    
+
     before <- timeseries[start_before:end_before]
     after  <- timeseries[start_after:end_after]
-    
+
     M1 <- mean(before, na.rm = TRUE)
     M2 <- mean(after, na.rm = TRUE)
-    
-    M1 <- ifelse(M1 == 0, 1e-7, M1)
-    M2 <- ifelse(M2 == 0, 1e-7, M2)
-    
+
     dist <- abs(M1 - M2) / max(abs(M1), abs(M2), 1e-7)
-    
-    if (dist > mean_level) 
+
+    if (dist > mean_level)
     {
       # Keep this breakpoint
       breaks_new <- c(breaks_new, b)
     }
   }
-  
+
   breaks_new <- c(breaks_new, n)
   return(sort(unique(breaks_new)))
 }
@@ -304,298 +351,313 @@ MeanCleaning <- function(timeseries, mean_level = 0.25, breaks,  window = 4)
 #' Minimum level length checks
 #'
 #' @param timeseries Given time series
-#' @param level_length Mean distance between two levels
-#' @param breaks breakpoints returned
+#' @param breaks Breakpoints returned
+#' @param level_length Minimum number of points required for a level
+#' @param max_iter Maximum number of merge iterations, used as an infinite
+#'   loop guard
 #' @examples
 #' LevelCheck(timeseries = StructuralDecompose::Nile_dataset[,1], breaks = c(1,4,5))
 #'
 #' LevelCheck(timeseries = runif(n = 50, min = 1, max = 10), breaks = c(1,4,5))
-#' @return The series cleaned with the minimum level check
-#' @importFrom utils tail
-#' @importFrom stats median
-
+#' @return The cleaned set of breakpoints
 #' @export
 #'
 LevelCheck <- function(timeseries, breaks, level_length = 10, max_iter = 100000)
 {
   n <- length(timeseries)
-  t <- sort(unique(c(0, breaks, n)))  # ensure boundaries
-  
+  brks <- sort(unique(c(0, breaks, n)))  # ensure boundaries
+
   iter <- 0L
-  repeat 
+  repeat
   {
     iter <- iter + 1L
-    if (iter > max_iter) stop("Max iterations reached — possible infinite loop")
-    
-    seg_lengths <- diff(t)
+    if (iter > max_iter) stop("Max iterations reached; possible infinite loop")
+
+    seg_lengths <- diff(brks)
     k <- which(seg_lengths < level_length)[1]  # leftmost short segment
     if (is.na(k)) break  # all segments long enough
-    
-    # merge direction: right by default; left if it's the last segment
+
+    # Merge direction: right by default; left if it is the last segment
     drop_idx <- if (k == length(seg_lengths)) k else (k + 1L)
-    
-    # safety: only drop internal boundaries (not 0 or n)
-    if (drop_idx <= 1L || drop_idx >= length(t)) break
-    
-    t <- t[-drop_idx]
+
+    # Safety: only drop internal boundaries (not 0 or n)
+    if (drop_idx <= 1L || drop_idx >= length(brks)) break
+
+    brks <- brks[-drop_idx]
   }
-  
-  return(t)
+
+  return(brks)
 }
-
-
-
-
 
 #' Automatic Anomaly detection
 #'
 #' @param timeseries Given time series
-#' @param frequency Timeseries frequency, defaults to 12 points
-#' @param conf_level Confidence level for Anomaly detection
-#' @param breaks breakpoints identified
-#' @param window_len Window length for anomaly detection
-#' @param window_len Window length for anomaly detection
+#' @param breaks Breakpoints identified
+#' @param frequency Time series frequency, defaults to 52 points
+#' @param conf_level Multiplier applied to the MAD when flagging anomalies
+#' @param window_len Window length for the moving median baseline
 #' @examples
 #' AnomalyDetection(timeseries = StructuralDecompose::Nile_dataset[,1], breaks = c(4, 50, 80))
 #'
 #' AnomalyDetection(timeseries = runif(n = 50, min = 1, max = 10),  breaks = c(4, 20, 30))
-#' @return the list of anomalies in the time series, along with the time series plot
-#' @importFrom stats mad
-#' @importFrom stats median
-
+#' @return A list with the de-anomalized series and the anomaly positions
+#' @importFrom stats mad median
 #' @export
 #'
-
-AnomalyDetection <- function(timeseries, breaks, frequency = 52, conf_level = 1.5, window_len = 14) 
+AnomalyDetection <- function(timeseries, breaks, frequency = 52, conf_level = 1.5, window_len = 14)
 {
   n <- length(timeseries)
   breaks <- sort(unique(c(0, breaks, n)))
-  
+
   y_med <- numeric(n)
-  window_medians <- numeric(n)
-  
-  # --- Build window-median baseline ---
-  for (i in seq_len(length(breaks) - 1)) 
+
+  # Build window-median baseline
+  for (i in seq_len(length(breaks) - 1))
   {
     seg_start <- breaks[i] + 1
     seg_end   <- breaks[i + 1]
     seg <- timeseries[seg_start:seg_end]
-    
+
     n_seg <- length(seg)
     num_windows <- ceiling(n_seg / window_len)
-    
-    for (w in seq_len(num_windows)) 
+
+    for (w in seq_len(num_windows))
     {
       w_start <- seg_start + (w - 1) * window_len
       w_end   <- min(seg_start + w * window_len - 1, seg_end)
-      
-      med_val <- median(timeseries[w_start:w_end], na.rm = TRUE)
-      y_med[w_start:w_end] <- med_val
-      window_medians[w_start:w_end] <- med_val
+
+      y_med[w_start:w_end] <- median(timeseries[w_start:w_end], na.rm = TRUE)
     }
   }
-  
-  # --- Compute residuals ---
+
+  # Compute residuals
   resid <- timeseries - y_med
   Anomalies <- integer(0)
-  
-  # --- MAD-based anomaly clipping ---
-  for (i in seq_len(length(breaks) - 1)) 
+
+  # MAD-based anomaly clipping
+  for (i in seq_len(length(breaks) - 1))
   {
     seg_idx <- (breaks[i] + 1):breaks[i + 1]
     seg_resid <- resid[seg_idx]
-    
+
     seg_median <- median(seg_resid, na.rm = TRUE)
     seg_mad <- mad(seg_resid, constant = 1.4826, na.rm = TRUE)
-    
+
     upper <- seg_median + conf_level * seg_mad
     lower <- seg_median - conf_level * seg_mad
-    
+
     high_out <- which(seg_resid > upper)
     low_out  <- which(seg_resid < lower)
     out_idx  <- c(high_out, low_out)
-    
-    if (length(out_idx) > 0) 
+
+    if (length(out_idx) > 0)
     {
       resid[seg_idx[out_idx]] <- pmax(pmin(seg_resid[out_idx], upper), lower)
       Anomalies <- c(Anomalies, seg_idx[out_idx])
     }
   }
-  
-  # --- Recombine de-anomalized series ---
-  de_anom <- resid + window_medians
-  
+
+  # Recombine de-anomalized series
+  de_anom <- resid + y_med
+
   return(list(
     DeAnomalized_series = de_anom,
     Anomalies = sort(unique(Anomalies))
   ))
 }
 
-
-#' Smoothening of the time series
+#' Smoothing of the time series
 #'
 #' @param timeseries Given time series
-#' @param frequency Timeseries frequency, defaults to 12 points
-#' @param smoothening_algorithm Smoothening algorithm required
-#' @param breaks Breakpoints identified by the previous algorithm
-#' @param lowess Lowess smoothener
+#' @param breaks Breakpoints identified by the previous algorithms
+#' @param frequency Time series frequency, defaults to 52 points
+#' @param smoothing_algorithm Smoothing algorithm to use. One of 'lowess',
+#'   'SMA' or 'loess'. Defaults to 'lowess'
+#' @param span Smoother span passed to the lowess and loess algorithms
 #' @examples
 #' Smoothing(timeseries = StructuralDecompose::Nile_dataset[,1], breaks = c(4, 50, 80))
 #'
 #' Smoothing(timeseries = runif(n = 50, min = 1, max = 10), breaks = c(4, 20, 30))
-#' @return The smoothened time series
-#' @importFrom utils tail
-#' @importFrom stats lowess
-#' @importFrom utils tail
-
+#' @return The smoothed trend line
+#' @importFrom stats lowess loess predict
 #' @export
 #'
-Smoothing <- function(timeseries, breaks, frequency = 52, smoothing_algorithm = "lowess", span = 0.3) 
+Smoothing <- function(timeseries, breaks, frequency = 52, smoothing_algorithm = "lowess", span = 0.3)
 {
   n <- length(timeseries)
   breaks <- sort(unique(c(0, breaks, n)))
   trend_line <- numeric(0)
-  
-  for (i in seq_len(length(breaks) - 1)) 
+
+  for (i in seq_len(length(breaks) - 1))
   {
     seg_start <- breaks[i] + 1
     seg_end   <- breaks[i + 1]
     seg <- timeseries[seg_start:seg_end]
-    
+
     # Handle very short segments gracefully
-    if (length(seg) < 3) 
+    if (length(seg) < 3)
     {
       smooth_seg <- rep(mean(seg, na.rm = TRUE), length(seg))
-    } else if (tolower(smoothing_algorithm) == "lowess") 
+    } else if (tolower(smoothing_algorithm) == "lowess")
     {
       smooth_seg <- lowess(seq_along(seg), seg, f = span)$y
-    } else if (tolower(smoothing_algorithm) == "sma") 
+    } else if (tolower(smoothing_algorithm) == "sma")
     {
-      if (!requireNamespace("TTR", quietly = TRUE)) 
+      if (!requireNamespace("TTR", quietly = TRUE))
       {
         stop("Package 'TTR' required for SMA smoothing.")
       }
-      smooth_seg <- TTR::SMA(seg, n = floor(length(seg) / 5))
+      ma_n <- max(2L, floor(length(seg) / 5))
+      smooth_seg <- TTR::SMA(seg, n = ma_n)
       smooth_seg[is.na(smooth_seg)] <- seg[is.na(smooth_seg)] # fill edges
-    } else if (tolower(smoothing_algorithm) == "loess") 
+    } else if (tolower(smoothing_algorithm) == "loess")
     {
       smooth_seg <- predict(loess(seg ~ seq_along(seg), span = span))
-    } else 
+    } else
     {
       stop("Unknown smoothing algorithm. Use 'lowess', 'SMA', or 'loess'.")
     }
-    
+
     trend_line <- c(trend_line, smooth_seg)
   }
-  
+
   return(trend_line)
 }
-
 
 #' Main decomposition algorithm
 #'
 #' @param Data Time series required
-#' @param frequency Frequency of the tine series
-#' @param break_algorithm breakpoints algorithm used. Defaults to strucchange
+#' @param frequency Frequency of the time series
+#' @param break_algorithm Breakpoints algorithm used. Defaults to strucchange
 #' @param smoothening_algorithm Smoothing algorithm used. Defaults to lowess
 #' @param break_level Break level for the breakpoints algorithm
-#' @param median_level Average median distance between two level
+#' @param median_level Average median distance between two levels
 #' @param mean_level Average mean distance between a group of points near breakpoints
 #' @param level_length Minimum number of points required to determine a level
 #' @param conf_level Confidence level for Anomaly detection, best to keep this a static value
-#' @param window_len Length of the Moving window for Anomaly Detection
-#' @param plot True of False indicating if you want the internal plots to be generated
+#' @param window_len Length of the moving window for Anomaly Detection
+#' @param plot TRUE or FALSE indicating if a summary plot of the decomposition
+#'   should be drawn
 #' @examples
 #' StructuralDecompose(Data = StructuralDecompose::Nile_dataset[,1])
 #'
 #' StructuralDecompose(Data = runif(n = 50, min = 1, max = 10))
-#' @return The decomposed time series along with a host of other metrics
-#' @importFrom stats ts
-#' @importFrom stats stl
+#' @return A list containing the anomalies, the trend line, the deseasonalized
+#'   series, the final breakpoints and the STL trend, seasonality and
+#'   remainder components
+#' @importFrom stats ts stl
 #' @export
 #'
 StructuralDecompose <- function(Data, frequency = 12, break_algorithm = 'strucchange', smoothening_algorithm = 'lowess', break_level = 0.01, median_level = 0.1, mean_level = 0.25, level_length = 12, conf_level = 2, window_len = 12, plot = FALSE)
 {
-  
-  #Initial Sanity checks
+
+  # Initial sanity checks
+  if (!is.numeric(Data))
+  {
+    stop('Data needs to be numeric')
+  }
+
   if(!is.numeric(frequency)  || !is.numeric(break_level) || !is.numeric(mean_level) || !is.numeric(median_level) || !is.numeric(level_length) || !is.numeric(conf_level) || !is.numeric(window_len))
   {
     stop('Value needs to be numeric')
   }
-  
+
   if(!is.logical(plot))
   {
     stop('Value needs to be boolean')
   }
-  
-  #Calling the main break-point algorithm
+
+  # Calling the main break-point algorithm
   Break_points <- BreakPoints(timeseries = Data, frequency = frequency, break_algorithm = break_algorithm, break_level = break_level)
-  
-  #Median Cleaning
+
+  # Median Cleaning
   Break_points <- MedianCleaning(timeseries = Data, breaks = Break_points, frequency = frequency, median_level = median_level)
-  
-  #Mean Cleaning
+
+  # Mean Cleaning
   Break_points <- MeanCleaning(timeseries = Data, breaks = Break_points, mean_level = mean_level)
-  
-  #Level check
+
+  # Level check
   Break_points <- LevelCheck(timeseries = Data, breaks = Break_points, level_length = level_length)
-  
-  #Anomaly Detection
-  Anom_output <- AnomalyDetection(timeseries = Data, frequency = frequency, breaks = Break_points, conf_level = conf_level)
+
+  # Anomaly Detection
+  Anom_output <- AnomalyDetection(timeseries = Data, frequency = frequency, breaks = Break_points, conf_level = conf_level, window_len = window_len)
   Cleanseries <- Anom_output$DeAnomalized_series
   Anomalies <- Anom_output$Anomalies
-  
-  #Smoothing of the time series
-  Decomposedtrend <- Smoothing(timeseries = Cleanseries, breaks = Break_points, frequency = frequency)
-  
-  #Detrending the series
-  Detrended_Data <- ts(Data - Decomposedtrend, frequency = frequency) 
-  
-  # --- Step X: Seasonal decomposition (robust to annual data or short series) ---
-  
+
+  # Smoothing of the time series
+  Decomposedtrend <- Smoothing(timeseries = Cleanseries, breaks = Break_points, frequency = frequency, smoothing_algorithm = smoothening_algorithm)
+
+  # Detrending the series
+  Detrended_Data <- ts(Data - Decomposedtrend, frequency = frequency)
+
+  # Seasonal decomposition (robust to annual data or short series)
   seasonal <- rep(0, length(Detrended_Data))
   trend <- rep(NA, length(Detrended_Data))
   remainder <- rep(NA, length(Detrended_Data))
   Deseasonalized <- Detrended_Data
-  
-  if (frequency > 1 && length(Detrended_Data) >= 2 * frequency) 
+
+  if (frequency > 1 && length(Detrended_Data) >= 2 * frequency)
   {
     # Try STL decomposition safely
     decomposed <- tryCatch(
       stl(ts(Detrended_Data, frequency = frequency), s.window = "periodic"),
       error = function(e) NULL
     )
-    
-    if (!is.null(decomposed) && !is.null(decomposed$time.series)) 
+
+    if (!is.null(decomposed) && !is.null(decomposed$time.series))
     {
       seasonal  <- decomposed$time.series[, "seasonal"]
       trend     <- decomposed$time.series[, "trend"]
       remainder <- decomposed$time.series[, "remainder"]
-      
+
       # Remove seasonal component
       Deseasonalized <- Detrended_Data - seasonal
-    } else 
+    } else
     {
-      warning("STL decomposition failed — using raw detrended data as deseasonalized series.")
+      warning("STL decomposition failed; using raw detrended data as deseasonalized series.")
     }
-    
-  } else 
+
+  } else
   {
     # No valid seasonality for annual or short data
-    warning("Frequency ≤ 1 or series too short — skipping STL decomposition.")
+    warning("Frequency <= 1 or series too short; skipping STL decomposition.")
   }
-  
-  # --- Step Y: Construct output ---
+
+  # Optional summary plot
+  if (plot)
+  {
+    graphics::plot(as.numeric(Data), type = "l", col = "grey40",
+                   xlab = "Index", ylab = "Value", main = "StructuralDecompose")
+    graphics::lines(Decomposedtrend, col = "blue", lwd = 2)
+
+    internal_breaks <- setdiff(Break_points, c(0, length(Data)))
+    if (length(internal_breaks) > 0)
+    {
+      graphics::abline(v = internal_breaks, col = "red", lty = 2)
+    }
+
+    if (length(Anomalies) > 0)
+    {
+      graphics::points(Anomalies, as.numeric(Data)[Anomalies], col = "darkorange", pch = 19)
+    }
+
+    graphics::legend("topright",
+                     legend = c("Series", "Trend", "Breakpoints", "Anomalies"),
+                     col = c("grey40", "blue", "red", "darkorange"),
+                     lty = c(1, 1, 2, NA), pch = c(NA, NA, NA, 19),
+                     bty = "n", cex = 0.8)
+  }
+
+  # Construct output
   newList <- list(
-    anomalies            = Anomalies,
-    trend_line           = Decomposedtrend,
+    anomalies             = Anomalies,
+    trend_line            = Decomposedtrend,
     Deseasonalized_Series = Deseasonalized,
-    breakpoints          = Break_points,
-    trend                = trend,
-    seasonality          = seasonal,
-    remainder            = remainder
+    breakpoints           = Break_points,
+    trend                 = trend,
+    seasonality           = seasonal,
+    remainder             = remainder
   )
-  
+
   return(newList)
 }
-
