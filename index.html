@@ -12,8 +12,8 @@
 <link rel="icon" sizes="any" href="favicon.ico">
 <link rel="manifest" href="site.webmanifest">
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Decomposes a Level Shifted Time Series">
 <meta name="description" content="Explains the behavior of a time series by decomposing it into its trend, seasonality and residuals. It is built to perform very well in the presence of significant level shifts. It is designed to play well with any breakpoint algorithm and any smoothing algorithm. Currently defaults to lowess for smoothing and strucchange for breakpoint identification. The package is useful in areas such as trend analysis, time series decomposition, breakpoint identification and anomaly detection.">
@@ -66,6 +66,7 @@
 </div>
 <!-- badges: start -->
 
+<p>Published write up, will be coming soon to the R Journal : <a href="https://arxiv.org/pdf/2510.04974" class="external-link uri">https://arxiv.org/pdf/2510.04974</a></p>
 <p><strong>StructuralDecompose</strong> is an algorithm suited to the decomposition of a time series into its component terms of trend, seasonality, and residuals. It is well suited to decompose a series in the presence of significant level shifts.</p>
 <p>The algorithm outputs the decomposed trend, seasonality, residuals, as well as anomalies detected.</p>
 <div class="section level2">
@@ -79,18 +80,18 @@
 <col width="8%">
 <col width="77%">
 </colgroup>
-<thead><tr class="header">
+<thead><tr>
 <th>Type</th>
 <th>Source</th>
 <th>Command</th>
 </tr></thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td>Release</td>
 <td>CRAN</td>
 <td><code>install.packages("StructuralDecompose")</code></td>
 </tr>
-<tr class="even">
+<tr>
 <td>Development</td>
 <td>GitHub</td>
 <td><code>devtools::install_github("StructuralDecompose/StructuralDecompose")</code></td>
@@ -148,7 +149,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>

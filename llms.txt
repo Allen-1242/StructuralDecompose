@@ -1,0 +1,53 @@
+# StructuralDecompose
+
+Published write up, will be coming soon to the R Journal :
+<https://arxiv.org/pdf/2510.04974>
+
+**StructuralDecompose** is an algorithm suited to the decomposition of a
+time series into its component terms of trend, seasonality, and
+residuals. It is well suited to decompose a series in the presence of
+significant level shifts.
+
+The algorithm outputs the decomposed trend, seasonality, residuals, as
+well as anomalies detected.
+
+## Installation
+
+The `StructuralDecompose` package is now available on CRAN.
+
+You can install it like so:
+
+| Type | Source | Command |
+|----|----|----|
+| Release | CRAN | `install.packages("StructuralDecompose")` |
+| Development | GitHub | `devtools::install_github("StructuralDecompose/StructuralDecompose")` |
+
+Once installed, load the package using:
+
+``` r
+
+library(StructuralDecompose)
+```
+
+# Package index
+
+## All functions
+
+- [`AnomalyDetection()`](AnomalyDetection.md) : Automatic Anomaly
+  detection
+- [`BreakPoints()`](BreakPoints.md) : Generation of breakpoints
+- [`LevelCheck()`](LevelCheck.md) : Minimum level length checks
+- [`MeanCleaning()`](MeanCleaning.md) : Mean level checks
+- [`MedianCleaning()`](MedianCleaning.md) : Median level checks
+- [`Nile_dataset`](Nile_dataset.md) : Nile River Dataset
+- [`Smoothing()`](Smoothing.md) : Smoothening of the time series
+- [`StructuralDecompose()`](StructuralDecompose.md) : Main decomposition
+  algorithm
+
+# Articles
+
+### All vignettes
+
+- [Decomposition](Decomposition.md):
+- [Example-Walkthrough](Example-Walkthrough.md):
+- [Introduction](package_intro.md):
